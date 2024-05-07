@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}{% endblock %}</title>
+    {% load static %}
+    <link rel="shortcut icon" href="{% static 'images/mobile-web-icon.png' %}" type="image/x-icon">
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" />
+    <link href="{% static 'fontawesome/css/all.css' %}" rel="stylesheet" />
+    <link href="{% static 'style.css' %}" rel="stylesheet" />
+</head>
+
+<body>
+    <header class="header">
+        <a href="../index.html" class="logo"> <i class="fas fa-shopping-cart"></i> shop </a>
+        <nav class="navbar">
+            <ul>
+                <li><a href="#home">home</a></li>
+                <li>
+                    <a href="#products">sản phẩm</a>
+                    <ul>
+                        <li>
+                            <a href="#">Đồ Nam</a>
+                            <ul>
+                                <li><a href="#">Áo nam</a></li>
+                                <li><a href="#">Vest - Blazer</a></li>
+                                <li><a href="#">Quần nam</a></li>
+                                <li><a href="#">Đồ nữ</a></li>
+                                <li><a href="#">Áo khoác nam</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#">Đồ nữ</a>
+                            <ul>
+                                <li><a href="#">Áo nữ</a></li>
+                                <li><a href="#">Áo dài</a></li>
+                                <li><a href="#">Áo khoác nữ</a></li>
+                                <li><a href="#">Quần nữ</a></li>
+                                <li><a href="#">Đầm</a></li>
+                                <li><a href="#">Váy</a></li>
+                                <li><a href="#">Chân váy</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#">Phụ kiện</a>
+                            <ul>
+                                <li><a href="#">Mắt Kính</a></li>
+                                <li><a href="#">Giày - Dép</a></li>
+                                <li><a href="#">Mũ - Nón</a></li>
+                                <li><a href="#">Vớ - Tất</a></li>
+                                <li><a href="#">Thắt Lưng</a></li>
+                                <li><a href="#">Túi - Ví</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><a href="#featured">nổi bật</a></li>
+                <li><a href="#review">đánh giá</a></li>
+                <li><a href="#contact">liên hệ</a></li>
+                <li><a href="#blogs">blogs</a></li>
+            </ul>
+        </nav>
+        <div class="icons">
+            <div id="menu-btn" class="fas fa-bars"></div>
+            <div id="user-btn" class="fas fa-user"></div>
+            <div id="search-btn" class="fas fa-search"></div>
+            <div id="shopping-cart-btn" class="fas fa-shopping-cart">
+                <span id="num-of-product-cart">0</span>
+            </div>
+            <div id="heart-btn" class="fas fa-heart">
+                <span id="num-of-product-heart">0</span>
+            </div>
+        </div>
+
+        <form action="" class="search-form">
+            <input type="search" name="" placeholder="search here..." id="search-box">
+            <label for="search-box" class="fas fa-search"></label>
+        </form>
+        <div class="user-box" style="display:none;">
+            <div class="logout-box">
+                <a class="logout-button">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Đăng xuất</span>
+                </a>
+            </div>
+        </div>
+        <ul class="product-cart-box" style="display: none;">
+            <li>
+                <h1 class="title-product-cart">Giỏ Hàng</h1>
+            </li>
+
+            <li>
+                <span class="total">Tổng: <strong>000.000đ</strong></span>
+                <button class="checkout btn" id="checkout-btn">CheckOut</button>
+            </li>
+        </ul>
+        <ul class="product-heart-box" style="display: none;">
+            <li>
+                <h1 class="title-product-heart">Sản Phẩm Yêu Thích</h1>
+            </li>
+        </ul>
+    </header>
+    <div class="container-fluid">
+        <div class="row">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+</body>
+
+</html>
