@@ -6,7 +6,7 @@ from django.shortcuts import redirect
 from .forms import IdentifyForm
 from .forms import RegistrationForm
 from .forms import RecoveryForm
-from .forms import SendSuccess
+
 from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect 
 from django.contrib.auth.tokens import default_token_generator

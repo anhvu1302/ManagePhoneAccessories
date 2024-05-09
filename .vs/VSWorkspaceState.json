@@ -6,6 +6,6 @@
     "\\WebApp\\templates\\layouts",
     "\\WebApp\\templates\\pages"
   ],
-  "SelectedNode": "\\WebApp\\models.py",
+  "SelectedNode": "\\WebApp\\templates\\pages\\recovery.html",
   "PreviewInSolutionExplorer": false
 }

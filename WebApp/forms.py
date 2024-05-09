@@ -26,8 +26,6 @@ import secrets
 class AuthenticationForm(AuthenticationForm):
     username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Enter your username'})) 
     password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Enter your password'}))
-
-
     def clean(self):
         cleaned_data = super().clean()
         username = cleaned_data.get('username')
@@ -38,7 +36,7 @@ class AuthenticationForm(AuthenticationForm):
             user = authenticate(username=username, password=password)
             if user is None:
               
-                raise forms.ValidationError("Tên người dùng hoặc mật khẩu không đúng.")
+                raise forms.ValidationError("Inconrrect Password or Username")
         
         return cleaned_data
     
@@ -67,7 +65,7 @@ class RegistrationForm(forms.Form):
            
             User.objects.get(email=email)
         except User.DoesNotExist:
-            return username
+            return email
         raise forms.ValidationError("Email already exists")
 
 
@@ -87,9 +85,6 @@ class RegistrationForm(forms.Form):
     def save(self):
        
         User.objects.create_user(username=self.cleaned_data['username'], email=self.cleaned_data['email'], password=self.cleaned_data['password1'])
-
-class SendSuccess(forms.Form):
-     success_message = forms.CharField(label='Success Message', widget=forms.TextInput(attrs={'readonly': True}))
 
 
 

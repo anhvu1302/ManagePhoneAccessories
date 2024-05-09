@@ -1,4 +1,7 @@
-from django.db import models
+﻿from django.db import models
+
+from django.contrib.auth.models import User
+
 
 class ParentCategories(models.Model):
     ParentCategoryName = models.CharField(max_length=100)
@@ -20,22 +23,15 @@ class Accessories(models.Model):
         Categories, on_delete=models.CASCADE, related_name="accessories"
     )
 
-class Users(models.Model):
-    UserName = models.CharField(max_length=50)
-    Password = models.CharField(max_length=50)
-    Email = models.CharField(max_length=100)
-    Avatar = models.CharField(max_length=255)
-    RoleName = models.CharField(max_length=50)
-
 class Cart(models.Model):
-    UserID = models.ForeignKey(Users, on_delete=models.CASCADE, related_name="carts")
+    UserID = models.ForeignKey(User, on_delete=models.CASCADE, related_name="carts")
     AccessoryID = models.ForeignKey(
         Accessories, on_delete=models.CASCADE, related_name="carts"
     )
     Quantity = models.IntegerField
 
 class Orders(models.Model):
-    UserID = models.ForeignKey(Users, on_delete=models.CASCADE, related_name="orders")
+    UserID = models.ForeignKey(User, on_delete=models.CASCADE, related_name="orders")
     TotalAmount = models.BigIntegerField
     PhoneNumber = models.CharField(max_length=11)
     Address = models.CharField(max_length=255)
@@ -50,8 +46,8 @@ class OrderDetails(models.Model):
     UnitPrice = models.BigIntegerField
 
 class ImportAccessory(models.Model):
-    UserID = models.ForeignKey(Users, on_delete=models.CASCADE, related_name="imports")
-    TotalAmount = models.BigIntegerField
+    UserID = models.ForeignKey(User, on_delete=models.CASCADE, related_name="imports")
+    TotalAmount = models.BigIntegerField(default=0)
     ImportDate = models.DateTimeField(auto_now_add=True)
 
 class ImportDetail(models.Model):
@@ -63,3 +59,4 @@ class ImportDetail(models.Model):
     )
     Quantity = models.IntegerField
     UnitPrice = models.BigIntegerField
+
