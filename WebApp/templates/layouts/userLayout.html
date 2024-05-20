@@ -11,6 +11,7 @@
     <link href="{% static 'fontawesome/css/all.css' %}" rel="stylesheet" />
     <link href="{% static 'style.css' %}" rel="stylesheet" />
     <link href="{% static 'product_details.css' %}" rel="stylesheet" />
+
 </head>
 
 <body>
@@ -33,7 +34,6 @@
             <div id="menu-btn" class="fas fa-bars"></div>
             <a href="/login">
                 <div id="user-btn" class="fas fa-user">
-                    <login">
                 </div>
             </a>
             <div id="search-btn" class="fas fa-search"></div>
@@ -45,10 +45,13 @@
             </div>
         </div>
 
-        <form action="" class="search-form">
-            <input type="search" name="" placeholder="search here..." id="search-box">
-            <label for="search-box" class="fas fa-search"></label>
+        <form action="{% url 'search_accessories' %}" class="search-form" method="get">
+            <input type="search" name="name" placeholder="search here..." id="search-box">
+            <button type="submit" class="h-100" style="width: 50px;">
+                <i class="fas fa-search"></i>
+            </button>
         </form>
+
         <div class="user-box" style="display:none;">
             <div class="logout-box">
                 <a class="logout-button">
@@ -132,6 +135,7 @@
         </div>
     </section>
     <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'main.js' %}"></script>
 </body>
 
 </html>

@@ -14,6 +14,7 @@ urlpatterns = [
         views.productByCategory,
         name="product_by_category",
     ),
+    path('search/', views.search_accessories, name='search_accessories'),
     path(
         "product_detail/<int:accessory_id>/",
         views.product_detail,

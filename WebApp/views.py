@@ -1,19 +1,15 @@
-﻿from pyexpat import model
-from django.shortcuts import render
-from django.contrib.auth.models import User
-from .forms import AuthenticationForm
-from django.shortcuts import redirect
+﻿from .forms import AuthenticationForm
 from .forms import IdentifyForm
-from .forms import RegistrationForm
 from .forms import RecoveryForm
+from .forms import RegistrationForm
 from .models import Accessories, Categories, ParentCategories
-from django.core.paginator import Paginator
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
 from django.http import HttpResponseRedirect
-from django.contrib.auth.tokens import default_token_generator
-from django.utils.http import urlsafe_base64_decode
-from django.utils.http import urlsafe_base64_encode
-from django.utils.encoding import force_str
+from django.shortcuts import redirect
+from django.shortcuts import render
 
 
 # Create your views here.
@@ -45,7 +41,7 @@ def productByCategory(request, categories_id=None):
     category = Categories.objects.filter(id=categories_id).first()
     accessories_list = Accessories.objects.filter(CategoryID__id=categories_id)
 
-    paginator = Paginator(accessories_list, 4) 
+    paginator = Paginator(accessories_list, 4)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
@@ -79,6 +75,32 @@ def productByParentCategory(request, parent_categories_id=None):
     }
 
     return render(request, "pages/productByParentCategory.html", data)
+
+def search_accessories(request):
+    query = request.GET.get("name", "")
+    accessories_list = []
+
+    if query:
+        accessories_list = Accessories.objects.filter(Name__contains=query)
+
+    paginator = Paginator(accessories_list, 4) 
+    page = request.GET.get('page')
+    try:
+        accessories = paginator.page(page)
+    except PageNotAnInteger:
+        accessories = paginator.page(1)
+    except EmptyPage:
+        accessories = paginator.page(paginator.num_pages)
+
+    parent_categories = ParentCategories.objects.prefetch_related("categories").all()
+
+    data = {
+        "accessories": accessories,
+        "parent_categories": parent_categories,
+        "query": query,
+    }
+
+    return render(request, "pages/search_results.html", data)
 
 
 def login(request):
