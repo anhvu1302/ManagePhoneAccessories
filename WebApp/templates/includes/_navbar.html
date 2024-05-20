@@ -1,0 +1,12 @@
+<ul>
+    {% for parent in parent_categories %}
+    <li>
+        <a href="#">{{ parent.ParentCategoryName }}</a>
+        <ul>
+            {% for category in parent.categories.all %}
+            <li><a href="#">{{ category.CategoryName }}</a></li>
+            {% endfor %}
+        </ul>
+    </li>
+    {% endfor %}
+</ul>

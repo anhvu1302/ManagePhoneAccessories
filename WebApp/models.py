@@ -14,11 +14,10 @@ class Categories(models.Model):
 
 class Accessories(models.Model):
     Name = models.CharField(max_length=100)
-    Price = models.BigIntegerField
-    Discount = models.IntegerField
+    Price = models.BigIntegerField()
+    Discount = models.IntegerField()
     Image = models.CharField(max_length=255)
     Description = models.CharField(max_length=255)
-    StockQuantity = models.IntegerField
     CategoryID = models.ForeignKey(
         Categories, on_delete=models.CASCADE, related_name="accessories"
     )
@@ -28,11 +27,11 @@ class Cart(models.Model):
     AccessoryID = models.ForeignKey(
         Accessories, on_delete=models.CASCADE, related_name="carts"
     )
-    Quantity = models.IntegerField
+    Quantity = models.IntegerField()
 
 class Orders(models.Model):
     UserID = models.ForeignKey(User, on_delete=models.CASCADE, related_name="orders")
-    TotalAmount = models.BigIntegerField
+    TotalAmount = models.BigIntegerField()
     PhoneNumber = models.CharField(max_length=11)
     Address = models.CharField(max_length=255)
     OrderDate = models.DateTimeField(auto_now_add=True)
@@ -42,8 +41,8 @@ class OrderDetails(models.Model):
     AccessoryID = models.ForeignKey(
         Accessories, on_delete=models.CASCADE, related_name="order_details"
     )
-    Quantity = models.IntegerField
-    UnitPrice = models.BigIntegerField
+    Quantity = models.IntegerField()
+    UnitPrice = models.BigIntegerField()
 
 class ImportAccessory(models.Model):
     UserID = models.ForeignKey(User, on_delete=models.CASCADE, related_name="imports")
@@ -57,6 +56,6 @@ class ImportDetail(models.Model):
     AccessoryID = models.ForeignKey(
         Accessories, on_delete=models.CASCADE, related_name="import_details"
     )
-    Quantity = models.IntegerField
-    UnitPrice = models.BigIntegerField
+    Quantity = models.IntegerField()
+    UnitPrice = models.BigIntegerField()
 

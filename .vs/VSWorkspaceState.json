@@ -1,11 +1,12 @@
 {
   "ExpandedNodes": [
     "",
+    "\\static",
     "\\WebApp",
     "\\WebApp\\templates",
     "\\WebApp\\templates\\layouts",
     "\\WebApp\\templates\\pages"
   ],
-  "SelectedNode": "\\WebApp\\templates\\pages\\recovery.html",
+  "SelectedNode": "\\WebApp\\views.py",
   "PreviewInSolutionExplorer": false
 }

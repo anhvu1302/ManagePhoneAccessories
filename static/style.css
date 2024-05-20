@@ -121,6 +121,7 @@ section {
 }
 
 .header .navbar ul a {
+  text-wrap: nowrap;
   font-size: 1.7rem;
   color: #666;
   margin: 0 1rem;
@@ -170,6 +171,7 @@ section {
 }
 
 .header .navbar>ul li>ul li>ul {
+  min-width: 205px;
   margin-left: 170px;
   margin-top: -31px;
 }

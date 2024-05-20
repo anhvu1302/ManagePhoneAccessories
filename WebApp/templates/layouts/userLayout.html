@@ -10,51 +10,18 @@
     <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" />
     <link href="{% static 'fontawesome/css/all.css' %}" rel="stylesheet" />
     <link href="{% static 'style.css' %}" rel="stylesheet" />
+    <link href="{% static 'product_details.css' %}" rel="stylesheet" />
 </head>
 
 <body>
     <header class="header">
-        <a href="../index.html" class="logo"> <i class="fas fa-shopping-cart"></i> shop </a>
+        <a href="" class="logo"> <i class="fas fa-shopping-cart"></i> shop </a>
         <nav class="navbar">
             <ul>
                 <li><a href="#home">home</a></li>
                 <li>
                     <a href="#products">sản phẩm</a>
-                    <ul>
-                        <li>
-                            <a href="#">Đồ Nam</a>
-                            <ul>
-                                <li><a href="#">Áo nam</a></li>
-                                <li><a href="#">Vest - Blazer</a></li>
-                                <li><a href="#">Quần nam</a></li>
-                                <li><a href="#">Đồ nữ</a></li>
-                                <li><a href="#">Áo khoác nam</a></li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="#">Đồ nữ</a>
-                            <ul>
-                                <li><a href="#">Áo nữ</a></li>
-                                <li><a href="#">Áo dài</a></li>
-                                <li><a href="#">Áo khoác nữ</a></li>
-                                <li><a href="#">Quần nữ</a></li>
-                                <li><a href="#">Đầm</a></li>
-                                <li><a href="#">Váy</a></li>
-                                <li><a href="#">Chân váy</a></li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="#">Phụ kiện</a>
-                            <ul>
-                                <li><a href="#">Mắt Kính</a></li>
-                                <li><a href="#">Giày - Dép</a></li>
-                                <li><a href="#">Mũ - Nón</a></li>
-                                <li><a href="#">Vớ - Tất</a></li>
-                                <li><a href="#">Thắt Lưng</a></li>
-                                <li><a href="#">Túi - Ví</a></li>
-                            </ul>
-                        </li>
-                    </ul>
+                    {% include 'includes/_navbar.html' %}
                 </li>
                 <li><a href="#featured">nổi bật</a></li>
                 <li><a href="#review">đánh giá</a></li>
@@ -64,7 +31,11 @@
         </nav>
         <div class="icons">
             <div id="menu-btn" class="fas fa-bars"></div>
-            <a href="/login"><div id="user-btn" class="fas fa-user"><login"></div></a>
+            <a href="/login">
+                <div id="user-btn" class="fas fa-user">
+                    <login">
+                </div>
+            </a>
             <div id="search-btn" class="fas fa-search"></div>
             <div id="shopping-cart-btn" class="fas fa-shopping-cart">
                 <span id="num-of-product-cart">0</span>
@@ -108,6 +79,58 @@
             {% endblock %}
         </div>
     </div>
+    <section class="footer">
+        <div class="container">
+            <div class="col-md box">
+                <h3>Giới thiệu</h3>
+                <p>Chào mừng bạn đến với trang web thời trang của chúng tôi! Chúng tôi là một nhóm các chuyên gia thời
+                    trang và kinh doanh trực tuyến, cung cấp cho bạn những sản phẩm thời trang chất lượng cao với giá cả
+                    hợp lý.</p>
+            </div>
+
+
+            <div class="col-md box">
+                <h3>category</h3>
+                <a href="#"> <i class="fas fa-arrow-right"></i> Đồ Nam </a>
+                <a href="#"> <i class="fas fa-arrow-right"></i> Đồ Nữ </a>
+                <a href="#"> <i class="fas fa-arrow-right"></i> Đồ Phụ Kiện </a>
+                <a href="#"> <i class="fas fa-arrow-right"></i> Bán chạy nhất </a>
+            </div>
+
+
+            <div class="col-md box">
+                <h3>quick links</h3>
+                <a href="#"> <i class="fas fa-arrow-right"></i> trang chủ </a>
+                <a href="#products"> <i class="fas fa-arrow-right"></i> sản phẩm </a>
+                <a href="#featured"> <i class="fas fa-arrow-right"></i> nổi bật </a>
+                <a href="#review"> <i class="fas fa-arrow-right"></i> đánh giá </a>
+                <a href="#blogs"> <i class="fas fa-arrow-right"></i> liên hệ </a>
+            </div>
+
+
+            <div class="col-md box">
+                <h3>extra links</h3>
+                <a href="#"> <i class="fas fa-arrow-right"></i> đơn hàng </a>
+                <a href="#"> <i class="fas fa-arrow-right"></i> tài khoản </a>
+                <a href="#"> <i class="fas fa-arrow-right"></i> danh sách </a>
+                <a href="#"> <i class="fas fa-arrow-right"></i> mua ngay </a>
+                <a href="#"> <i class="fas fa-arrow-right"></i> ưu đãi mới </a>
+            </div>
+
+        </div>
+
+        <div class="share">
+            <a href="https://www.facebook.com/Van.Anh.130203/" class="fab fa-facebook-f"></a>
+            <a href="https://github.com/anhvu13" class="fab fa-twitter"></a>
+            <a href="https://www.pinterest.com/vuvananh010203/" class="fab fa-pinterest"></a>
+            <a href="#" class="fab fa-github"></a>
+            <a href="https://www.instagram.com/vananhvu1302/" class="fab fa-instagram"></a>
+        </div>
+
+        <div class="credit">
+            © copyright @ 2023 by <span>Vũ Văn Anh</span>
+        </div>
+    </section>
     <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
 </body>
 
