@@ -1,0 +1,57 @@
+{% extends "layouts/userLayout.html" %}
+{% load static %}
+{% load custom_filters %}
+{% block title %}
+Chào mừng bạn đến với trang chủ
+{% endblock %}
+
+{% block content %}
+<section class="products" id="products">
+    <h1 class="heading mt-5"><span>Danh sách phụ kiện: </span>
+        {{parCategory.ParentCategoryName}}
+    </h1>
+    <div class="container" id="product-list" style="display: flex; flex-wrap: wrap;">
+        {% for acc in accessories %}
+        <div class="col-md-auto box">
+            <div class="icons">
+                <a href="#" class="fas fa-shopping-cart"></a>
+                <a href="#" class="fas fa-heart"></a>
+                <a href="product_detail/{{acc.id}}" class="fas fa-eye"></a>
+            </div>
+            <div class="image">
+                <img src="{% static 'images/product/' %}{{acc.Image}}">
+            </div>
+            <div class="content">
+                <h3 class="title-name text-truncate">
+                    <a href="product_detail/{{ acc.id }}" data-bs-toggle="tooltip" title="{{ acc.Name }}">
+                        {{ acc.Name }}
+                    </a>
+                </h3>
+                <div class="box-price">
+                    <div class="price">{{ acc.Price|format_discounted_price:acc.Discount }}</div>
+                    <div class="cut">{{ acc.Price|format_currency }}</div>
+                    <div class="offer">{{ acc.Discount }}% off</div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="pagination justify-content-center fs-1">
+        <span class="step-links">
+            {% if accessories.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ accessories.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ accessories.number }} of {{ accessories.paginator.num_pages }}.
+            </span>
+
+            {% if accessories.has_next %}
+            <a href="?page={{ accessories.next_page_number }}">next</a>
+            <a href="?page={{ accessories.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+</section>
+{% endblock %}

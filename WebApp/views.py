@@ -6,8 +6,8 @@ from django.shortcuts import redirect
 from .forms import IdentifyForm
 from .forms import RegistrationForm
 from .forms import RecoveryForm
-from .models import Accessories, ParentCategories
-
+from .models import Accessories, Categories, ParentCategories
+from django.core.paginator import Paginator
 from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect
 from django.contrib.auth.tokens import default_token_generator
@@ -30,10 +30,55 @@ def index(request):
 def product_detail(request, accessory_id):
     accessory = Accessories.objects.filter(id=accessory_id).first()
     if accessory:
-        data = {"accessory": accessory}
+        data = {
+            "accessory": accessory,
+            "parent_categories": ParentCategories.objects.prefetch_related(
+                "categories"
+            ).all(),
+        }
         return render(request, "pages/product_detail.html", data)
     else:
         return redirect("login")
+
+
+def productByCategory(request, categories_id=None):
+    category = Categories.objects.filter(id=categories_id).first()
+    accessories_list = Accessories.objects.filter(CategoryID__id=categories_id)
+
+    paginator = Paginator(accessories_list, 4) 
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    parent_categories = ParentCategories.objects.prefetch_related("categories").all()
+
+    data = {
+        "accessories": page_obj,
+        "parent_categories": parent_categories,
+        "category": category,
+    }
+
+    return render(request, "pages/productByCategory.html", data)
+
+
+def productByParentCategory(request, parent_categories_id=None):
+    parCategory = ParentCategories.objects.filter(id=parent_categories_id).first()
+    accessories_list = Accessories.objects.filter(
+        CategoryID__ParentCategoryID__id=parent_categories_id
+    )
+
+    paginator = Paginator(accessories_list, 4)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    parent_categories = ParentCategories.objects.prefetch_related("categories").all()
+
+    data = {
+        "accessories": page_obj,
+        "parent_categories": parent_categories,
+        "parCategory": parCategory,
+    }
+
+    return render(request, "pages/productByParentCategory.html", data)
 
 
 def login(request):

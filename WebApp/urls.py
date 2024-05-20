@@ -3,6 +3,17 @@ from . import views
 
 urlpatterns = [
     path("", views.index, name="index"),
+    path("home", views.index, name="home"),
+    path(
+        "product/parent-category/<int:parent_categories_id>/",
+        views.productByParentCategory,
+        name="product_by_parent_category",
+    ),
+    path(
+        "product/category/<int:categories_id>/",
+        views.productByCategory,
+        name="product_by_category",
+    ),
     path(
         "product_detail/<int:accessory_id>/",
         views.product_detail,
