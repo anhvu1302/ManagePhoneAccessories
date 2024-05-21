@@ -1,0 +1,101 @@
+﻿{% extends "layouts/adminLayout.html" %}
+
+{% block title %}
+{{ form.instance.id|yesno:"Edit Accessory,Add Accessory" }}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <style>
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .card {
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+            padding: 20px;
+        }
+
+        .card-body {
+            padding: 30px;
+        }
+
+        .form-control, .form-control-file, .form-select {
+            font-size: 1.5rem; 
+            height: calc(3.5rem + 2px); 
+            padding: 1rem 1.5rem;
+        }
+
+        .form-control-textarea {
+            font-size: 1.5rem; 
+            height: auto;
+            padding: 1rem 1.5rem;
+        }
+
+        label {
+            font-size: 1.75rem; 
+            margin-bottom: 10px; 
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            font-size: 1.5rem;
+            padding: 0.75rem 1.5rem;
+        }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+                border-color: #0056b3;
+            }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            font-size: 1.5rem;
+            padding: 0.75rem 1.5rem;
+        }
+
+            .btn-secondary:hover {
+                background-color: #545b62;
+                border-color: #4e555b;
+            }
+    </style>
+    <div class="card">
+        <div class="card-body">
+            <h2>{{ form.instance.id|yesno:"Edit Accessory,Add Accessory" }}</h2>
+            <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                {% csrf_token %}
+
+                <div class="form-group mb-3">
+                    <label for="id_Name">Name</label>
+                    {{ form.Name }}
+                </div>
+                <div class="form-group mb-3">
+                    <label for="id_Price">Price</label>
+                    {{ form.Price }}
+                </div>
+                <div class="form-group mb-3">
+                    <label for="id_Discount">Discount</label>
+                    {{ form.Discount }}
+                </div>
+                <div class="form-group mb-3">
+                    <label for="id_Image">Image</label>
+                    {{ form.Image}}
+                </div>
+                <div class="form-group mb-3">
+                    <label for="id_Description">Description</label>
+                    {{ form.Description }}
+                </div>
+                <div class="form-group mb-3">
+                    <label for="id_CategoryID">Category</label>
+                    {{ form.CategoryID }}
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg">Save</button>
+                <a href="{% url 'accessory_list' %}" class="btn btn-secondary btn-lg">Back to list</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

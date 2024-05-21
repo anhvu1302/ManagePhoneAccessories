@@ -1,0 +1,76 @@
+﻿{% extends "layouts/adminLayout.html" %}
+
+{% block title %}
+Delete Accessory
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <style>
+        .card {
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .card-body {
+            padding: 30px;
+        }
+
+        .card-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .btn-primary, .btn-danger {
+            font-size: 1.5rem;
+            padding: 0.75rem 1.5rem;
+            margin: 5px;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+            .btn-danger:hover {
+                background-color: #c82333;
+                border-color: #bd2130;
+            }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            font-size: 1.5rem;
+            padding: 0.75rem 1.5rem;
+            margin: 5px;
+        }
+
+            .btn-secondary:hover {
+                background-color: #545b62;
+                border-color: #4e555b;
+            }
+    </style>
+    <div class="card">
+        <div class="card-body">
+            <h2 class="card-title">Delete Accessory</h2>
+            <p>Are you sure you want to delete the accessory <strong>{{ accessory.Name }}</strong>?</p>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <button type="submit" class="btn btn-danger">Yes, delete</button>
+                    <a href="{% url 'accessory_list' %}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

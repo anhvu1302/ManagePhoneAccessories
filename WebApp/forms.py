@@ -22,6 +22,9 @@ from django.core.exceptions import ValidationError
 
 import secrets
 
+from WebApp.models import Accessories
+
+
 
 class AuthenticationForm(AuthenticationForm):
     username = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'Enter your username'})) 
@@ -37,7 +40,8 @@ class AuthenticationForm(AuthenticationForm):
             if user is None:
               
                 raise forms.ValidationError("Inconrrect Password or Username")
-        
+            else:
+                login(self.request, user)
         return cleaned_data
     
 
@@ -193,3 +197,8 @@ class IdentifyForm(forms.Form):
             server.starttls()
             server.login(sender_email, password)
             server.sendmail(sender_email, receiver_email, message.as_string())
+
+
+
+
+

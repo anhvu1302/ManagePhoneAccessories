@@ -10,7 +10,7 @@ from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.shortcuts import render
-
+from WebApp.models import Accessories
 
 # Create your views here.
 def index(request):
@@ -104,13 +104,14 @@ def search_accessories(request):
 
 
 def login(request):
+    if request.user.is_authenticated: 
+        return redirect("index") 
+
     if request.method == "POST":
         form = AuthenticationForm(request, request.POST)
         if form.is_valid():
-
             return redirect("index")
         else:
-
             return render(request, "pages/login.html", {"form": form})
     else:
         form = AuthenticationForm()
@@ -153,3 +154,9 @@ def recovery(request, uidb64, token):
     else:
         form = RecoveryForm(uidb64=uidb64, token=token)
     return render(request, "pages/recovery.html", {"form": form})
+
+
+
+
+
+

@@ -1,10 +1,12 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.http import HttpResponseRedirect
+from WebApp.models import Accessories
 
 
+from .forms import AccessoriesForm
 def admin_required(view_func):
     def wrapper(request, *args, **kwargs):
         if not request.user.is_authenticated or not request.user.is_superuser:
@@ -59,3 +61,40 @@ def logout_admin(request):
 
 def dashboard(request):
     return render(request, "pages/dashboard.html")
+
+
+
+
+def accessory_list(request):
+    accessories = Accessories.objects.all()
+    return render(request, 'pages/accessory_list.html', {'accessories': accessories})
+
+
+def accessory_create(request):
+    if request.method == 'POST':
+        form = AccessoriesForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('accessory_list')
+    else:
+        form = AccessoriesForm()
+    return render(request, 'pages/accessory_form.html', {'form': form})
+
+
+def accessory_update(request, id):
+    accessory = get_object_or_404(Accessories, id=id)
+    if request.method == 'POST':
+        form = AccessoriesForm(request.POST, request.FILES, instance=accessory)
+        if form.is_valid():
+            form.save()
+            return redirect('accessory_list')
+    else:
+        form = AccessoriesForm(instance=accessory)
+    return render(request, 'pages/accessory_form.html', {'form': form})
+
+def accessory_delete(request, id):
+    accessory = get_object_or_404(Accessories, id=id)
+    if request.method == 'POST':
+        accessory.delete()
+        return redirect('accessory_list')
+    return render(request, 'pages/accessory_confirm_delete.html', {'accessory': accessory})

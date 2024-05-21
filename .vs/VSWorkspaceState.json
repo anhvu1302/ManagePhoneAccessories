@@ -2,11 +2,12 @@
   "ExpandedNodes": [
     "",
     "\\AdminWeb",
+    "\\AdminWeb\\templates",
+    "\\AdminWeb\\templates\\pages",
+    "\\ManagePhoneAccessories",
     "\\static",
-    "\\WebApp\\templates",
-    "\\WebApp\\templates\\layouts",
-    "\\WebApp\\templates\\pages"
+    "\\WebApp"
   ],
-  "SelectedNode": "\\AdminWeb\\views.py",
+  "SelectedNode": "\\AdminWeb\\templates\\pages\\adminLogin.html",
   "PreviewInSolutionExplorer": false
 }
