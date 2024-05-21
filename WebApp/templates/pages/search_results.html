@@ -2,12 +2,12 @@
 {% load static %}
 {% load custom_filters %}
 {% block title %}
-Search Results
+Kết quả tìm kiếm cho từ khóa {{ query }}
 {% endblock %}
 
 {% block content %}
 <section class="products" id="products">
-    <h1 class="heading mt-5"><span>Search Results for: </span>{{ query }}</h1>
+    <h1 class="heading mt-5"><span>Kết quả tìm kiếm cho: </span>{{ query }}</h1>
     <div class="container" id="product-list" style="display: flex; flex-wrap: wrap;">
         {% for acc in accessories %}
         <div class="col-md-auto box">

@@ -33,7 +33,15 @@
                                 </div>
                                 <h2 class="mb-1">Đăng nhập trang quản trị</h2>
                             </div>
-
+                            {% if messages %}
+                            <div class="mb-3">
+                                {% for message in messages %}
+                                <div class="alert alert-danger" role="alert">
+                                    {{ message }}
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
                             <form method="post" action="">
                                 {% csrf_token %}
                                 <div class="mb-3">
