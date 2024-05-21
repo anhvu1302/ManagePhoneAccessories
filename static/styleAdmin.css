@@ -323,13 +323,7 @@ nav.close~.dashboard {
 .dashboard .top .admin-profile img {
     width: 50px;
     border-radius: 50%;
-}
-
-.dashboard .top .admin-profile p {
-    margin: 0;
-    transform: translateY(15px);
-}
-
+}   
 nav.close~.dashboard .top {
     left: 73px;
     width: calc(100% - 73px);
@@ -486,23 +480,6 @@ nav.close~.dashboard .top {
     color: var(--text-color);
     border-color: var(--panel-color);
 }
-#products tbody td:last-child,
-#customers tbody td:last-child,
-#orders tbody td:last-child {
-    position: relative;
-}
-
-#products tbody button,
-#customers tbody button,
-#orders tbody button {
-    position: relative;
-    display: inline-block;
-    width: 50%;
-    height: 100%;
-    border: none;
-    background-color: transparent;
-    color: var(--text-color);
-}
 .dash-content .form-select,
 .dash-content .form-control{
     display: unset;
@@ -530,151 +507,6 @@ nav.close~.dashboard .top {
 .dash-content .activity-data table thead th div i{
     cursor: pointer;
 }
-#btn-add-product,
-#btn-add-order,
-#btn-add-customer {
-    background-color: var(--panel-color);
-    color: var(--text-color);
-}
-
-#products tbody tr td,
-#customers tbody tr td {
-    position: relative;
-}
-#customers tbody tr td:nth-child(6){
-    display: flex;
-}
-#customers tbody tr td:nth-child(6) input {
-    width: 5rem;
-}
-#customers tbody tr td:nth-child(6) i{
-    float:right;
-    cursor: pointer;
-    margin-left: 0.3rem;
-    margin-top: 0.4rem;
-}
-#products tbody tr td:nth-child(3) a {
-    text-decoration: none;
-    color: var(--text-color);
-}
-
-#products tbody tr td:nth-child(3) img {
-    position: absolute;
-    top: -107px;
-    left: -100px;
-    height: 0;
-    border-radius: 5px;
-    transition-duration: .1s;
-    z-index: 2;
-}
-#products tbody tr td:nth-child(3):hover a{
-    text-decoration: underline;
-}
-#products tbody tr td:nth-child(3):hover img {
-    height: 140px;
-}
-
-.add-product,
-.edit-product  {
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow-y: auto;
-    z-index: 14;
-    background-color: rgba(255, 255, 255, 0.8);
-    transition: .2s ease;
-}
-#orders tbody tr td:nth-child(4){
-    position: relative;
-}
-#orders tbody tr td:nth-child(4) p{
-    display: flex;
-    justify-content: space-between;
-}
-#orders tbody tr td:nth-child(4) p>a{
-    text-align: left;
-    text-decoration: none;
-    color: var(--text-color);
-}
-#orders tbody tr td:nth-child(4) p>a>img{
-    position: absolute;
-    top: -90px;
-    left: -145px;
-    height: 0;
-    border-radius: 5px;
-    transition-duration: .1s;
-    z-index: 2;
-}
-#orders tbody tr td:nth-child(4) p:hover>a>img{
-    height: 140px;
-}
-#orders tbody tr td:nth-child(4) p:hover>a{
-    cursor: pointer;
-    text-decoration: underline;
-}
-#orders tbody tr td:nth-child(4) p>strong{
-    display: flex;
-    justify-content: space-between;
-}
-.add-customer,
-.edit-customer {
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow-y: auto;
-    z-index: 14;
-    background-color: rgba(255, 255, 255, 0.8);
-    transition: .2s ease;
-}
-
-.add-product .container,
-.edit-product .container {
-    width: 50rem;
-    margin-top: 2rem;
-}
-.add-customer .container,
-.edit-customer .container {
-    width: 33rem;
-    transform: translateY(40%);
-}
-#add-product-form,
-#edit-product-form,
-#add-customer-form,
-#edit-customer-form {
-    background-color: #cdcdcd;
-    padding: 1rem;
-    border-radius: 7px;
-}
-
-.add-product.active,
-.edit-product.active,
-.add-customer.active,
-.edit-customer.active  {
-    display: block;
-}
-
-.add-product .close-btn,
-.edit-product .close-btn,
-.add-customer .close-btn,
-.edit-customer .close-btn{
-    font-size: 3rem;
-    position: absolute;
-    right: 10px;
-    cursor: pointer;
-}
-
 @media (max-width: 1000px) {
     nav {
         width: 73px;

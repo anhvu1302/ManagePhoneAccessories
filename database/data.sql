@@ -1,4 +1,10 @@
 -- SQLite
+INSERT INTO auth_user (id, password, last_login, is_superuser, username, last_name, email, is_staff, is_active, date_joined, first_name)
+VALUES (1,'pbkdf2_sha256$720000$8wZKZEe31qp8ksJmRbbiK5$DDGXvU84gs27n7L94NdJGjGC+zO/ZKEj3C/yn0FDII8=','2024-05-21 01:51:04.381058',1,'admin','','vuvananh010203@gmail.com',1,1,'2024-05-21 01:11:12.761545','');
+INSERT INTO auth_user (id, password, last_login, is_superuser, username, last_name, email, is_staff, is_active, date_joined, first_name)
+VALUES (2,'pbkdf2_sha256$720000$8wZKZEe31qp8ksJmRbbiK5$DDGXvU84gs27n7L94NdJGjGC+zO/ZKEj3C/yn0FDII8=','2024-05-21 01:51:04.381058',0,'customer1','','example123@gmail.com',0,1,'2024-05-21 01:11:12.761545','');
+
+
 INSERT INTO WebApp_parentcategories (id, ParentCategoryName)
 VALUES (1,'IPhone');
 INSERT INTO WebApp_parentcategories (id, ParentCategoryName)
@@ -78,3 +84,17 @@ INSERT INTO WebApp_accessories (id, Name, Price, Discount, Image, Description, C
 VALUES (19,'Củ Sạc Nhanh 20W dành cho iPhone 14, 13 Pro Max, 12Pro, 12Pro Max, iPad, Macbook hàng Zin',650000,42,'1715946324956.jpg','Củ Sạc Nhanh 20W dành cho iPhone 14, 13 Pro Max, 12Pro, 12Pro Max, iPad, Macbook hàng Zin',12);
 INSERT INTO WebApp_accessories (id, Name, Price, Discount, Image, Description, CategoryID_id)
 VALUES (20,'Củ sạc nhanh 20W dành cho iPhone 15, 14, 13 Pro Max, 12Pro, 12Pro Max, iPad, Macbook chính hãng',550000,29,'1715946324957.jpg','Củ Sạc Nhanh 20W dành cho iPhone 14, 13 Pro Max, 12Pro, 12Pro Max, iPad, Macbook chính hãng. Hỗ trợ sạc nhanh PD Type-C 3.0 công suất sử dụng lên đến 20W, cổng sạc type-c thời thượng.. Công suất đầu ra 5V-3A/ 9V-2.22A',12);
+
+INSERT INTO WebApp_orders (id, TotalAmount, OrderDate, UserID_id, IsCancelled, IsPaid)
+VALUES (1,855000,'2024-05-21 01:11:12.761545',1,0,1);
+INSERT INTO WebApp_orders (id, TotalAmount, OrderDate, UserID_id, IsCancelled, IsPaid)
+VALUES (2,960500,'2024-05-21 02:11:12.761545',1,0,0);
+
+INSERT INTO WebApp_orderdetails (id, Quantity, UnitPrice, AccessoryID_id, OrderID_id)
+VALUES (1,2,247500,1,1);
+INSERT INTO WebApp_orderdetails (id, Quantity, UnitPrice, AccessoryID_id, OrderID_id)
+VALUES (2,2,180000,2,1);
+INSERT INTO WebApp_orderdetails (id, Quantity, UnitPrice, AccessoryID_id, OrderID_id)
+VALUES (3,1,462500,3,2);
+INSERT INTO WebApp_orderdetails (id, Quantity, UnitPrice, AccessoryID_id, OrderID_id)
+VALUES (4,2,249000,7,2);

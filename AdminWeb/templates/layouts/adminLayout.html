@@ -8,11 +8,13 @@
     <title>{% block title %}{% endblock %}</title>
     {% load static %}
     <link rel="shortcut icon" href="{% static 'images/mobile-web-icon.png' %}" type="image/x-icon">
-    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" />
-    <link href="{% static 'fontawesome/css/all.css' %}" rel="stylesheet" />
-    <link href="{% static 'style.css' %}" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'fontawesome/css/all.css' %}" />
     <link rel="stylesheet" href="{% static 'styleAdmin.css' %}">
+    <link rel="stylesheet" href="{% static 'sweetalert2.min.css' %}">
 
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'popper.min.js' %}"></script>
     <script src="{% static 'jquery.min.js' %}"></script>
 </head>
 
@@ -30,7 +32,8 @@
         <div class="menu-items">
             <ul class="nav-links">
                 <li>
-                    <a href="#" class="active">
+                    <a href="{% url 'admin_dashboard' %}"
+                        class="{% if request.path == '/admin/dashboard/' %}active{% endif %}">
                         <i class="fa-light fa-house"></i>
                         <span class="link-name">Dahsboard</span>
                     </a>
@@ -42,7 +45,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="{% url 'admin_order' %}" class="{% if request.path == '/admin/order/' %}active{% endif %}">
                         <i class="fa-light fa-cart-shopping"></i>
                         <span class="link-name">Đơn Hàng</span>
                     </a>
@@ -86,7 +89,10 @@
                     <i class="fa-light fa-bell"></i>
                 </div>
                 <img src="https://raw.githubusercontent.com/anhvu13/fashion.github.io/main/profiles.svg" alt="">
-                <p style="color: var(--black-light-color);">Administrator</p>
+                <div class="d-flex justify-content-center align-items-center">
+                    <p class="m-0 fs-4 text-danger" style="color: var(--black-light-color);">{{ request.user.username }}
+                    </p>
+                </div>
             </div>
         </div>
 
@@ -100,6 +106,8 @@
 
 
     </section>
+
+    <script src="{% static 'sweetalert2.all.min.js' %}"></script>
     <script src="{% static 'admin.min.js' %}"></script>
 </body>
 

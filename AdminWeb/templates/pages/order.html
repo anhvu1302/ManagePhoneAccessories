@@ -1,0 +1,270 @@
+{% extends "layouts/adminLayout.html" %}
+{% load static %}
+{% block title %}
+Trang quản lý đơn hàng
+{% endblock %}
+{% load custom_filters %}
+{% block content %}
+<div class="modal fade" id="orderDetailModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="orderDetailModalLabel">Chi tiết đơn hàng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h3>Thông tin đơn hàng</h3>
+                <form class="container-fluid">
+                    <div class="row">
+                        <div class="col-6">
+                            <fieldset disabled>
+                                <div class="mb-3 row justify-content-center align-items-center">
+                                    <label for="orderId" class="form-label col-4">Mã đơn hàng:</label>
+                                    <div class="col-8">
+                                        <input type="text" id="orderId" name="orderId" class="form-control w-100">
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                        <div class="col-6">
+                            <fieldset disabled>
+                                <div class="mb-3 row justify-content-center align-items-center">
+                                    <label for="customer" class="form-label col-4">Khách hàng:</label>
+                                    <div class="col-8">
+                                        <input type="text" id="customer" name="customer" class="form-control w-100">
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <fieldset disabled>
+                                <div class="mb-3 row justify-content-center align-items-center">
+                                    <label for="totalAmount" class="form-label col-4">Tổng tiền:</label>
+                                    <div class="col-8">
+                                        <input type="text" id="totalAmount" name="totalAmount"
+                                            class="form-control w-100">
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                        <div class="col-6">
+                            <fieldset disabled>
+                                <div class="mb-3 row justify-content-center align-items-center">
+                                    <label for="orderDate" class="form-label col-4">Thời gian đặt hàng:</label>
+                                    <div class="col-8">
+                                        <input type="datetime" id="orderDate" name="orderDate"
+                                            class="form-control w-100">
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="mb-3 row justify-content-center align-items-center">
+                                <label for="isPaid" class="form-label col-4">Thanh toán:</label>
+                                <div class="col-8">
+                                    <select id="isPaid" name="isPaid" class="form-select w-100">
+                                        <option value="true">Đã thanh toán</option>
+                                        <option value="false">Chờ thanh toán</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mb-3 row justify-content-center align-items-center">
+                                <label for="isCancelled" class="form-label col-4">Trạng thái đơn hàng:</label>
+                                <div class="col-8">
+                                    <select id="isCancelled" name="isCancelled" class="form-select w-100">
+                                        <option value="true">Đã hủy</option>
+                                        <option value="false">Tồn tại</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <h3>Danh sách sản phẩm</h3>
+                <div id="order-details">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Phụ kiện</th>
+                                <th>Hình ảnh</th>
+                                <th>Số lượng </th>
+                                <th>Đơn giá </th>
+                                <th>Thành tiền </th>
+                            </tr>
+                        </thead>
+                        <tbody id="product-table-body">
+                            <tr>
+                                <td>1</td>
+                                <td class="text-start td-img">
+                                    <a class="text-black text-decoration-none" href="/product_detail/1/"
+                                        data-bs-toggle="tooltip"
+                                        title="Ốp lưng da iPhone 15 Pro Max HDD Produce (đa năng, có ngăn đựng thẻ, kệ chống lưng)"
+                                        target="_blank">
+                                        Ốp lưng da iPhone 15 Pro Max HDD Produce (đa năng, có ngăn đựng thẻ, kệ chống
+                                        lưng)
+                                    </a>
+                                </td>
+                                <td>
+                                    <div style="width: 120px; height: 160px;">
+                                        <img class="w-100 h-100" id="product-image"
+                                            src="{% static 'images/product/1715946324938.jpg' %}"
+                                            alt="/static/images/product/1715946324938.jpg">
+                                    </div>
+                                </td>
+                                <td>2</td>
+                                <td>247.500đ</td>
+                                <td>247.500đ</td>
+
+                            </tr>
+
+                            <tr>
+                                <td>2</td>
+                                <td class="text-start td-img">
+                                    <a class="text-black text-decoration-none" href="/product_detail/2/"
+                                        data-bs-toggle="tooltip"
+                                        title="Kính cường lực Nillkin H+ Pro cho iPhone 15 Pro Max cao cấp (trong suốt, mỏng 0.2mm, mài cạnh 2.5D)"
+                                        target="_blank">
+                                        Kính cường lực Nillkin H+ Pro cho iPhone 15 Pro Max cao cấp (trong suốt, mỏng
+                                        0.2mm, mài cạnh 2.5D)
+                                    </a>
+                                </td>
+                                <td>
+                                    <div style="width: 120px; height: 160px;">
+                                        <img class="w-100 h-100" id="product-image"
+                                            src="{% static 'images/product/1715946324938.jpg' %}"
+                                            alt="/static/images/product/1715946324938.jpg">
+                                    </div>
+                                </td>
+                                <td>2</td>
+                                <td>180.000đ</td>
+                                <td>180.000đ</td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="updateOrder()">Cập nhật</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="activity">
+    <div class="title">
+        <i class="fa-regular fa-boxes-stacked"></i>
+        <span class="text">Danh sách đơn hàng</span>
+    </div>
+    <div class="activity-data">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <td colspan="8">
+                        <form method="get">
+                            <select class="form-select" name="searchType" id="searchType">
+                                <option value="id">Tìm theo mã</option>
+                                <option value="customerName">Tìm theo tên khách hàng</option>
+                            </select>
+                            <input class="form-control" type="text" placeholder="Tìm kiếm..." id="searchInput" name="searchInput" value="{{ request.GET.searchInput }}">
+                            <button class="btn btn-light" type="submit">
+                                <i class="fa-thin fa-magnifying-glass" style="color: #3557ff;"></i>
+                                Tìm kiếm
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            </thead>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Khách hàng</th>
+                    <th>Tổng tiền
+                        <div>
+                            <i class="fa fa-solid fa-sort-up" onclick="sortUpTableProductByColumn(3)"></i>
+                            <i class="fa fa-solid fa-sort-down" onclick="sortDownTableProductByColumn(3)"></i>
+                        </div>
+                    </th>
+                    <th>
+                        Thời gian đặt hàng
+                    </th>
+                    <th>
+                        Trạng thái thanh toán
+                    </th>
+                    <th>
+                        Trạng thái đơn hàng
+                    </th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody id="product-table-body">
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order.id }}</td>
+                    <td>{{ order.UserID.username }}</td>
+
+
+                    <td>{{ order.TotalAmount|format_currency }}</td>
+                    <td>{{ order.OrderDate|date:"h:m:s d/m/Y" }}</td>
+                    <td>
+                        {% if order.IsPaid %}
+                        <p class="text-success">Đã thanh toán</p>
+                        {% else %}
+                        <p class="text-danger">Chờ thanh toán</p>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if order.IsCancelled %}
+                        <p class="text-danger">Đã hủy</p>
+                        {% else %}
+                        <p class="text-success">Tồn tại</p>
+                        {% endif %}
+                    </td>
+                    <td>
+
+                        <button class="btn" type="button" onclick="loadOrderDetails({{ order.id }})">
+                            <i class="fa-light fa-eye"></i>
+                        </button>
+                        <button class="btn text-success" type="button"
+                            onclick="confirmPaymentOrder({{ order.id }},'{{ order.IsPaid}}')">
+                            <i class="fa-light fa-check"></i>
+                        </button>
+                        <a href="#" class="btn text-danger"
+                            onclick="cancelOrder({{ order.id }},'{{ order.IsPaid}}','{{ order.IsCancelled}}')">
+                            <i class="fa-light fa-xmark"></i>
+                        </a>
+
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="pagination justify-content-end pe-5">
+        <span class="step-links">
+            {% if orders.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ orders.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ orders.number }} of {{ orders.paginator.num_pages }}.
+            </span>
+
+            {% if orders.has_next %}
+            <a href="?page={{ orders.next_page_number }}">next</a>
+            <a href="?page={{ orders.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+</div>
+{% endblock %}
