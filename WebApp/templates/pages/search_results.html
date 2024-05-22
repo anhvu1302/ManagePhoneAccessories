@@ -17,7 +17,7 @@ Kết quả tìm kiếm cho từ khóa {{ query }}
                 <a href="{% url 'productDetail' acc.id %}" class="fas fa-eye"></a>
             </div>
             <div class="image">
-                <img src="/static/images/product/{{acc.Image.url}}" title="/static/images/product/{{acc.Image.url}}">
+                <img src="{{acc.Image.url}}" title="{{acc.Image.url}}">
             </div>
             <div class="content">
                 <h3 class="title-name text-truncate">

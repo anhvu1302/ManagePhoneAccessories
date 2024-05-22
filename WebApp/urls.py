@@ -5,7 +5,6 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("contact", views.contact, name="contact"),
     path("policy", views.policy, name="policy"),
-    path("home", views.index, name="home"),
     path(
         "product/parent-category/<int:parent_categories_id>",
         views.productByParentCategory,

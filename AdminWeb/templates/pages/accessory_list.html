@@ -28,7 +28,7 @@ Add New Accessory
                 <td>{{ accessory.Name }}</td>
                 <td>{{ accessory.Price }}</td>
                 <td>{{ accessory.Discount }}%</td>
-                <td><img src="/static/images/product/{{ accessory.Image.url }}" alt="{{ accessory.Name }}"
+                <td><img src="{{ accessory.Image.url }}" alt="{{ accessory.Name }}"
                         class="img-thumbnail" style="max-width: 100px;"></td>
                 <td>
                     <p data-bs-toggle="tooltip" title="{{ accessory.Description }}">

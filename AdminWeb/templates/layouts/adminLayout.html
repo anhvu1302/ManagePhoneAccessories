@@ -38,8 +38,17 @@
                         <span class="link-name">Dahsboard</span>
                     </a>
                 </li>
+
                 <li>
-                    <a href="{% url 'accessory_list' %} ">
+                    <a href="{% url 'manage_categories' %} "
+                        class="{% if request.path == '/admin/manage-categories/' %}active{% endif %}">
+                        <i class="fa-light fa-boxes-stacked"></i>
+                        <span class="link-name">Danh mục</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'accessory_list' %} "
+                        class="{% if request.path == '/admin/list/' %}active{% endif %}">
                         <i class="fa-light fa-boxes-stacked"></i>
                         <span class="link-name">Sản Phẩm</span>
                     </a>

@@ -1,23 +1,21 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login, logout
+from .forms import AccessoriesForm, ParentCategoryForm, CategoryForm
 from django.contrib import messages
-from django.http import HttpResponseRedirect
-from WebApp.models import Orders, OrderDetails
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
+from WebApp.models import Accessories, Categories, ParentCategories
+from WebApp.models import Orders, OrderDetails
 import json
-from WebApp.models import Accessories
-
-
-from .forms import AccessoriesForm
 
 
 def admin_required(view_func):
     def wrapper(request, *args, **kwargs):
         if not request.user.is_authenticated or not request.user.is_superuser:
-            return redirect("/admin")
+            return redirect("/admin/")
         return view_func(request, *args, **kwargs)
 
     return wrapper
@@ -229,3 +227,54 @@ def accessory_delete(request, id):
     return render(
         request, "pages/accessory_confirm_delete.html", {"accessory": accessory}
     )
+
+
+def manage_categories(request):
+    parent_form = ParentCategoryForm(request.POST or None)
+    category_form = CategoryForm(request.POST or None)
+
+    if request.method == "POST":
+        if "add_parent_category" in request.POST and parent_form.is_valid():
+            parent_form.save()
+        elif "add_category" in request.POST and category_form.is_valid():
+            category_form.save()
+        elif "save_changes" in request.POST:
+            for key, value in request.POST.items():
+                if key.startswith("parent_category_"):
+                    parent_category_id = int(key.split("_")[-1])
+                    parent_category = ParentCategories.objects.get(
+                        id=parent_category_id
+                    )
+                    parent_category.ParentCategoryName = value
+                    parent_category.save()
+                elif key.startswith("category_"):
+                    category_id = int(key.split("_")[-1])
+                    category = Categories.objects.get(id=category_id)
+                    category.CategoryName = value
+                    category.save()
+
+    parent_categories = ParentCategories.objects.all()
+    categories = Categories.objects.all()
+
+    return render(
+        request,
+        "pages/manage_categories.html",
+        {
+            "parent_form": parent_form,
+            "category_form": category_form,
+            "parent_categories": parent_categories,
+            "categories": categories,
+        },
+    )
+
+
+def delete_parent_category(request, id):
+    parent_category = get_object_or_404(ParentCategories, id=id)
+    parent_category.delete()
+    return redirect("manage_categories")
+
+
+def delete_category(request, id):
+    category = get_object_or_404(Categories, id=id)
+    category.delete()
+    return redirect("manage_categories")
