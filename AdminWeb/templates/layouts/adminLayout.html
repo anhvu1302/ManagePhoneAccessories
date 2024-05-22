@@ -33,9 +33,16 @@
             <ul class="nav-links">
                 <li>
                     <a href="{% url 'admin_dashboard' %}"
-                        class="{% if request.path == '/admin/dashboard/' %}active{% endif %}">
+                       class="{% if request.path == '/admin/dashboard/' %}active{% endif %}">
                         <i class="fa-light fa-house"></i>
                         <span class="link-name">Dahsboard</span>
+                    </a>
+                </li>
+       
+                <li>
+                    <a href="{% url 'manage_categories' %} ">
+                        <i class="fa-light fa-boxes-stacked"></i>
+                        <span class="link-name">Danh mục</span>
                     </a>
                 </li>
                 <li>

@@ -4,13 +4,13 @@
     "\\AdminWeb",
     "\\AdminWeb\\templates",
     "\\AdminWeb\\templates\\layouts",
+    "\\AdminWeb\\templates\\pages",
     "\\WebApp",
     "\\WebApp\\templates",
-    "\\WebApp\\templates\\includes",
     "\\WebApp\\templates\\layouts",
     "\\WebApp\\templates\\pages",
     "\\WebApp\\templatetags"
   ],
-  "SelectedNode": "\\WebApp\\templates\\pages\\search_results.html",
+  "SelectedNode": "\\AdminWeb\\views.py",
   "PreviewInSolutionExplorer": false
 }

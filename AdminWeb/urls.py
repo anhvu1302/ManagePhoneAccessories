@@ -14,5 +14,8 @@ urlpatterns = [
     path('create/', accessory_create, name='accessory_create'),
     path('update/<int:id>/', accessory_update, name='accessory_update'),
     path('delete/<int:id>/', accessory_delete, name='accessory_delete'),
+    path('manage-categories/', manage_categories, name='manage_categories'),
+    path('delete_parent/<int:id>/', delete_parent_category, name='delete_parent_category'),
+    path('delete_category/<int:id>/', delete_category, name='delete_category'),
 ]
 
