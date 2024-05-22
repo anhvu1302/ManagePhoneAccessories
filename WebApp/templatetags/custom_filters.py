@@ -20,3 +20,14 @@ def format_discounted_price(price, discount):
         return f"{discounted_price:,.0f}đ".replace(",", ".")
     except (ValueError, TypeError):
         return price
+
+@register.filter
+def obfuscate_email(email):
+    if '@' not in email:
+        return email 
+
+    local_part, domain = email.split('@')
+    if len(local_part) < 2:
+        return email 
+
+    return f'{local_part[0]}********{local_part[-1]}@{domain}'

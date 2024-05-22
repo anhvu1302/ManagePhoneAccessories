@@ -1,3 +1,4 @@
+{% load custom_filters %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,11 +8,16 @@
     <title>{% block title %}{% endblock %}</title>
     {% load static %}
     <link rel="shortcut icon" href="{% static 'images/mobile-web-icon.png' %}" type="image/x-icon">
+
+    <link href="{% static 'sweetalert2.min.css' %}" rel="stylesheet">
     <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" />
     <link href="{% static 'fontawesome/css/all.css' %}" rel="stylesheet" />
     <link href="{% static 'style.css' %}" rel="stylesheet" />
     <link href="{% static 'product_details.css' %}" rel="stylesheet" />
 
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'popper.min.js' %}"></script>
+    <script src="{% static 'jquery.min.js' %}"></script>
 </head>
 
 <body>
@@ -19,23 +25,19 @@
         <a href="/home" class="logo"> <i class="fas fa-shopping-cart"></i> shop </a>
         <nav class="navbar">
             <ul>
-                <li><a href="#home">home</a></li>
+                <li><a href="{% url 'index' %}">home</a></li>
                 <li>
-                    <a href="#products">sản phẩm</a>
+                    <a href="javascript:void(0)">sản phẩm</a>
                     {% include 'includes/_navbar.html' %}
                 </li>
-                <li><a href="#featured">nổi bật</a></li>
-                <li><a href="#review">đánh giá</a></li>
-                <li><a href="#contact">liên hệ</a></li>
-                <li><a href="#blogs">blogs</a></li>
+                <li><a href="{% url 'contact' %}">liên hệ</a></li>
+                <li><a href="{% url 'policy' %}">Chính sách</a></li>
             </ul>
         </nav>
         <div class="icons">
             <div id="menu-btn" class="fas fa-bars"></div>
-            <a href="/login">
-                <div id="user-btn" class="fas fa-user">
-                </div>
-            </a>
+            <div id="user-btn" class="fas fa-user">
+            </div>
             <div id="search-btn" class="fas fa-search"></div>
             <div id="shopping-cart-btn" class="fas fa-shopping-cart">
                 <span id="num-of-product-cart">0</span>
@@ -52,29 +54,37 @@
             </button>
         </form>
 
-        <div class="user-box" style="display:none;">
+        <div class="user-box" id="user-box" style="display: none;">
+            {% if user.is_authenticated %}
+            <div class="user-details">
+                <div class="image-user">
+                    <img src="{% static 'images/app/avatarUser.jpg' %}" alt="Avatar" class="avatar">
+                </div>
+                <div class="user-infor">
+                    <h2 class="user-name text-danger">{{ user.username }}</h2>
+                    <p class="user-email">{{ user.email|obfuscate_email }}</p>
+                    <p class="user-rank">Tham gia:{{ user.date_joined|date:"d/m/Y" }}</p>
+                </div>
+            </div>
             <div class="logout-box">
-                <a class="logout-button">
+                <a class="logout-button" href="{% url 'logout' %}">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>Đăng xuất</span>
                 </a>
             </div>
+            {% else %}
+            <div class="logout-box">
+                <a class="logout-button" href="{% url 'login' %}">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Đăng Nhập</span>
+                </a>
+                <a class="logout-button" href="{% url 'register' %}">
+                    <i class="fa-sharp fa-thin fa-address-card"></i>
+                    <span>Đăng ký</span>
+                </a>
+            </div>
+            {% endif %}
         </div>
-        <ul class="product-cart-box" style="display: none;">
-            <li>
-                <h1 class="title-product-cart">Giỏ Hàng</h1>
-            </li>
-
-            <li>
-                <span class="total">Tổng: <strong>000.000đ</strong></span>
-                <button class="checkout btn" id="checkout-btn">CheckOut</button>
-            </li>
-        </ul>
-        <ul class="product-heart-box" style="display: none;">
-            <li>
-                <h1 class="title-product-heart">Sản Phẩm Yêu Thích</h1>
-            </li>
-        </ul>
     </header>
     <div class="container-fluid">
         <div class="row">

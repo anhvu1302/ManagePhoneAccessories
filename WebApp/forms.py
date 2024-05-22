@@ -1,29 +1,18 @@
-﻿from base64 import urlsafe_b64encode
-import email
-from django import forms
-import re
-from django.utils.http import urlsafe_base64_decode
-from django.utils.http import urlsafe_base64_encode
-
-from django.contrib.auth.forms import AuthenticationForm
+﻿from django import forms
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.tokens import default_token_generator
-from django.utils.encoding import smart_str
-
-from django.utils.encoding import force_bytes
-
+from django.contrib.auth.forms import AuthenticationForm,UserChangeForm,PasswordChangeForm
 from django.contrib.auth.models import User
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from django.urls import reverse
-from django.utils.http import urlencode
+from django.contrib.auth.tokens import default_token_generator
 from django.core.exceptions import ValidationError
-
+from django.urls import reverse
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_decode
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import email
+import re
 import secrets
-
-from WebApp.models import Accessories
-
+import smtplib
 
 
 class AuthenticationForm(AuthenticationForm):

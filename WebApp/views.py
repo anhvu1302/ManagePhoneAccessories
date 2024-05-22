@@ -1,15 +1,18 @@
-﻿from .forms import AuthenticationForm
-from .forms import IdentifyForm
-from .forms import RecoveryForm
-from .forms import RegistrationForm
+﻿from .forms import (
+    AuthenticationForm,
+    IdentifyForm,
+    RecoveryForm,
+    RegistrationForm,
+)
 from .models import Accessories, Categories, ParentCategories
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.http import HttpResponseRedirect
-from django.shortcuts import redirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from WebApp.models import Accessories
 
 
@@ -20,9 +23,16 @@ def index(request):
         "parent_categories": ParentCategories.objects.prefetch_related(
             "categories"
         ).all(),
+        "user": request.user,
     }
     return render(request, "pages/index.html", data)
 
+
+def contact(request):
+    return render(request, "pages/contact.html")
+
+def policy(request):
+    return render(request, "pages/policy.html")
 
 def productDetail(request, accessory_id):
     accessory = Accessories.objects.filter(id=accessory_id).first()
@@ -100,6 +110,11 @@ def search_accessories(request):
     }
 
     return render(request, "pages/search_results.html", data)
+
+
+def userLogout(request):
+    logout(request)
+    return redirect("/")
 
 
 def login(request):
