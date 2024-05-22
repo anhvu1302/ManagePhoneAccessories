@@ -16,14 +16,14 @@ Danh sách phụ kiện thuộc loại: {{parCategory.ParentCategoryName}}
             <div class="icons">
                 <a href="#" class="fas fa-shopping-cart"></a>
                 <a href="#" class="fas fa-heart"></a>
-                <a href="product_detail/{{acc.id}}" class="fas fa-eye"></a>
+                <a href="{% url 'productDetail' acc.id %}" class="fas fa-eye"></a>
             </div>
             <div class="image">
-                <img src="{{acc.Image.url}}">
+                <img src="/static/images/product/{{acc.Image.url}}" title="/static/images/product/{{acc.Image.url}}">
             </div>
             <div class="content">
                 <h3 class="title-name text-truncate">
-                    <a href="product_detail/{{ acc.id }}" data-bs-toggle="tooltip" title="{{ acc.Name }}">
+                    <a href="{% url 'productDetail' acc.id %}" data-bs-toggle="tooltip" title="{{ acc.Name }}">
                         {{ acc.Name }}
                     </a>
                 </h3>

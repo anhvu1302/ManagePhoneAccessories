@@ -130,7 +130,7 @@ def orderDetails(request, order_id):
                             "Name": detail.AccessoryID.Name,
                             "Price": detail.AccessoryID.Price,
                             "Discount": detail.AccessoryID.Discount,
-                            "Image": detail.AccessoryID.Image,
+                            "Image": detail.AccessoryID.Image.url,
                             "Description": detail.AccessoryID.Description,
                         },
                         "Quantity": detail.Quantity,

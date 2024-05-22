@@ -17,3 +17,4 @@ class AccessoriesForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(AccessoriesForm, self).__init__(*args, **kwargs)
         self.fields['CategoryID'].label_from_instance = lambda obj: obj.CategoryName
+        self.fields['CategoryID'].widget.attrs.update({'class': 'formbold-form-input formbold-form-textarea'})

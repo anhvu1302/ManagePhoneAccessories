@@ -38,7 +38,7 @@
             <div class="formbold-mb-3">
                 <label for="id_Image" class="formbold-form-label">Image</label>
                 {% if form.instance.Image %}
-                <p>Current image: <img src="/{{ form.instance.Image.name }}" alt="Image" width="100"></p>
+                <p>Current image: <img src="/static/images/product/{{ form.instance.Image.name }}" alt="Image" width="100"></p>
                 {% endif %}
                 <input type="file" name="Image" id="id_Image" class="formbold-form-input" />
                 {% for error in form.Image.errors %}
@@ -48,7 +48,7 @@
 
             <div class="formbold-mb-3">
                 <label for="id_Description" class="formbold-form-label">Description</label>
-                <textarea name="Description" id="id_Description" class="formbold-form-input formbold-form-textarea">{{ form.Description.value }}</textarea>
+                <textarea name="Description" id="id_Description" class="formbold-form-input formbold-form-textarea" rows="7">{{ form.Description.value }}</textarea>
                 {% for error in form.Description.errors %}
                 <div class="text-danger">{{ error }}</div>
                 {% endfor %}

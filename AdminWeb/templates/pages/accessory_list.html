@@ -7,7 +7,7 @@ Add New Accessory
 {% block content %}
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-      
+
         <a href="{% url 'accessory_create' %}" class="btn btn-primary">Add New Accessory</a>
     </div>
     <table class="table table-bordered table-hover">
@@ -28,8 +28,13 @@ Add New Accessory
                 <td>{{ accessory.Name }}</td>
                 <td>{{ accessory.Price }}</td>
                 <td>{{ accessory.Discount }}%</td>
-                <td><img src="{{ accessory.Image.url }}" alt="{{ accessory.Name }}" class="img-thumbnail" style="max-width: 100px;"></td>
-                <td>{{ accessory.Description }}</td>
+                <td><img src="/static/images/product/{{ accessory.Image.url }}" alt="{{ accessory.Name }}"
+                        class="img-thumbnail" style="max-width: 100px;"></td>
+                <td>
+                    <p data-bs-toggle="tooltip" title="{{ accessory.Description }}">
+                        {{ accessory.Description|slice:":100" }}{% if accessory.Description|length > 100 %}...{% endif %}
+                    </p>
+                </td>
 
                 <td>
                     {{ accessory.CategoryID.CategoryName }}
@@ -38,8 +43,10 @@ Add New Accessory
 
 
                 <td>
-                    <a href="{% url 'accessory_update' accessory.id %}" class="btn btn-sm btn-warning">Edit</a>
-                    <a href="{% url 'accessory_delete' accessory.id %}" class="btn btn-sm btn-danger">Delete</a>
+                    <div class="d-flex flex-column justify-content-center gap-2">
+                        <a href="{% url 'accessory_update' accessory.id %}" class="btn btn-sm btn-warning">Edit</a>
+                        <a href="{% url 'accessory_delete' accessory.id %}" class="btn btn-sm btn-danger">Delete</a>
+                    </div>
                 </td>
             </tr>
             {% endfor %}

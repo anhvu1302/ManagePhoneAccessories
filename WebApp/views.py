@@ -12,6 +12,7 @@ from django.shortcuts import redirect
 from django.shortcuts import render
 from WebApp.models import Accessories
 
+
 # Create your views here.
 def index(request):
     data = {
@@ -23,18 +24,15 @@ def index(request):
     return render(request, "pages/index.html", data)
 
 
-def product_detail(request, accessory_id):
+def productDetail(request, accessory_id):
     accessory = Accessories.objects.filter(id=accessory_id).first()
-    if accessory:
-        data = {
-            "accessory": accessory,
-            "parent_categories": ParentCategories.objects.prefetch_related(
-                "categories"
-            ).all(),
-        }
-        return render(request, "pages/product_detail.html", data)
-    else:
-        return redirect("login")
+    data = {
+        "accessory": accessory,
+        "parent_categories": ParentCategories.objects.prefetch_related(
+            "categories"
+        ).all(),
+    }
+    return render(request, "pages/product_detail.html", data)
 
 
 def productByCategory(request, categories_id=None):
@@ -76,6 +74,7 @@ def productByParentCategory(request, parent_categories_id=None):
 
     return render(request, "pages/productByParentCategory.html", data)
 
+
 def search_accessories(request):
     query = request.GET.get("name", "")
     accessories_list = []
@@ -83,8 +82,8 @@ def search_accessories(request):
     if query:
         accessories_list = Accessories.objects.filter(Name__contains=query)
 
-    paginator = Paginator(accessories_list, 4) 
-    page = request.GET.get('page')
+    paginator = Paginator(accessories_list, 4)
+    page = request.GET.get("page")
     try:
         accessories = paginator.page(page)
     except PageNotAnInteger:
@@ -104,8 +103,8 @@ def search_accessories(request):
 
 
 def login(request):
-    if request.user.is_authenticated: 
-        return redirect("index") 
+    if request.user.is_authenticated:
+        return redirect("index")
 
     if request.method == "POST":
         form = AuthenticationForm(request, request.POST)
@@ -154,9 +153,3 @@ def recovery(request, uidb64, token):
     else:
         form = RecoveryForm(uidb64=uidb64, token=token)
     return render(request, "pages/recovery.html", {"form": form})
-
-
-
-
-
-
