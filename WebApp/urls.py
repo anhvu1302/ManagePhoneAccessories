@@ -27,4 +27,8 @@ urlpatterns = [
     path("register", views.register, name="register"),
     path("identify", views.identify, name="identify"),
     path("recovery/<uidb64>/<token>/", views.recovery, name="recovery"),
+    # vnpay url
+    path("create-payment", views.create_payment, name="create_payment"),
+    path("payment", views.payment, name="payment"),
+    path("payment_return", views.payment_return, name="payment_return"),
 ]
