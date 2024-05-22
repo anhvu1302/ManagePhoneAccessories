@@ -13,8 +13,8 @@ Chào mừng bạn đến với trang chủ
                 <div class="product-details-left">
                     <div class="product-image-container">
                         <img id="product-image"
-                            src="{% static 'images/product/' %}{{accessory.Image}}"
-                            alt="{% static 'images/product/' %}{{accessory.Image}}">
+                            src="{{accessory.Image.url}}"
+                            alt="{{accessory.Image.url}}">
                     </div>
                 </div>
             </div>

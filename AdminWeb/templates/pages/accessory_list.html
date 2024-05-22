@@ -1,0 +1,49 @@
+{% extends "layouts/adminLayout.html" %}
+
+{% block title %}
+Add New Accessory
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      
+        <a href="{% url 'accessory_create' %}" class="btn btn-primary">Add New Accessory</a>
+    </div>
+    <table class="table table-bordered table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Discount</th>
+                <th>Image</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for accessory in accessories %}
+            <tr>
+                <td>{{ accessory.Name }}</td>
+                <td>{{ accessory.Price }}</td>
+                <td>{{ accessory.Discount }}%</td>
+                <td><img src="{{ accessory.Image.url }}" alt="{{ accessory.Name }}" class="img-thumbnail" style="max-width: 100px;"></td>
+                <td>{{ accessory.Description }}</td>
+
+                <td>
+                    {{ accessory.CategoryID.CategoryName }}
+                </td>
+                <td>{{ accessory.CategoryID.ParentCategoryID.ParentCategoryName }}</td>
+
+
+                <td>
+                    <a href="{% url 'accessory_update' accessory.id %}" class="btn btn-sm btn-warning">Edit</a>
+                    <a href="{% url 'accessory_delete' accessory.id %}" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

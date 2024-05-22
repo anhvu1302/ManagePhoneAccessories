@@ -10,4 +10,9 @@ urlpatterns = [
     path("order/cancel_order/<int:order_id>/", cancelOrder, name="cancel_order"),
     path("order/confirm-payment/<int:order_id>/", confirmPayment, name="confirm_payment"),
     path("order/update/<int:order_id>/", updateOrder, name="updated_order"),
+    path('list/', accessory_list, name='accessory_list'),
+    path('create/', accessory_create, name='accessory_create'),
+    path('update/<int:id>/', accessory_update, name='accessory_update'),
+    path('delete/<int:id>/', accessory_delete, name='accessory_delete'),
 ]
+

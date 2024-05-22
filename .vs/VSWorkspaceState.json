@@ -2,11 +2,15 @@
   "ExpandedNodes": [
     "",
     "\\AdminWeb",
-    "\\static",
+    "\\AdminWeb\\templates",
+    "\\AdminWeb\\templates\\layouts",
+    "\\WebApp",
     "\\WebApp\\templates",
+    "\\WebApp\\templates\\includes",
     "\\WebApp\\templates\\layouts",
-    "\\WebApp\\templates\\pages"
+    "\\WebApp\\templates\\pages",
+    "\\WebApp\\templatetags"
   ],
-  "SelectedNode": "\\AdminWeb\\views.py",
+  "SelectedNode": "\\WebApp\\templates\\pages\\search_results.html",
   "PreviewInSolutionExplorer": false
 }

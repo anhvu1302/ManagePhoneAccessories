@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -8,6 +8,10 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 import json
+from WebApp.models import Accessories
+
+
+from .forms import AccessoriesForm
 
 
 def admin_required(view_func):
@@ -79,7 +83,9 @@ def orderDashboard(request):
             pass
     elif search_type == "customerName":
         if search_input:
-            orders_list = Orders.objects.filter(UserID__username__icontains=search_input)
+            orders_list = Orders.objects.filter(
+                UserID__username__icontains=search_input
+            )
     else:
         orders_list = Orders.objects.select_related("UserID").all()
 
@@ -97,8 +103,6 @@ def orderDashboard(request):
         orders = paginator.page(paginator.num_pages)
 
     return render(request, "pages/order.html", {"orders": orders})
-
-
 
 
 def orderDetails(request, order_id):
@@ -187,3 +191,41 @@ def cancelOrder(request, order_id):
         except Orders.DoesNotExist:
             return JsonResponse({"success": False, "error": "Order not found"})
     return JsonResponse({"success": False, "error": "Invalid request method"})
+
+
+def accessory_list(request):
+    accessories = Accessories.objects.all()
+    return render(request, "pages/accessory_list.html", {"accessories": accessories})
+
+
+def accessory_create(request):
+    if request.method == "POST":
+        form = AccessoriesForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect("accessory_list")
+    else:
+        form = AccessoriesForm()
+    return render(request, "pages/accessory_form.html", {"form": form})
+
+
+def accessory_update(request, id):
+    accessory = get_object_or_404(Accessories, id=id)
+    if request.method == "POST":
+        form = AccessoriesForm(request.POST, request.FILES, instance=accessory)
+        if form.is_valid():
+            form.save()
+            return redirect("accessory_list")
+    else:
+        form = AccessoriesForm(instance=accessory)
+    return render(request, "pages/accessory_form.html", {"form": form})
+
+
+def accessory_delete(request, id):
+    accessory = get_object_or_404(Accessories, id=id)
+    if request.method == "POST":
+        accessory.delete()
+        return redirect("accessory_list")
+    return render(
+        request, "pages/accessory_confirm_delete.html", {"accessory": accessory}
+    )
