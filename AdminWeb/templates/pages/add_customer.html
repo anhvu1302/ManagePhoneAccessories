@@ -1,0 +1,9 @@
+{% extends "layouts/adminLayout.html" %}
+{% block content %}
+<h2>Thêm Khách Hàng</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Thêm</button>
+</form>
+{% endblock %}

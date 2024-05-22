@@ -1,0 +1,96 @@
+{% extends "layouts/adminLayout.html" %}
+{% block title %}
+Trang quản lý Tài Khoản Khách Hàng
+{% endblock %}
+{% block content %}
+<div class="activity">
+    <div class="title">
+        <i class="fa-thin fa-users"></i>
+        <span class="text">Danh sách khách hàng</span>
+
+    </div>
+    <div class="activity-data">
+        <div><button class="btn btn-light" type="button">
+                <a href="{% url 'add_customer' %}">
+                    <i class="fa-light fa-plus"></i> Thêm</a>
+            </button></div>
+        <table class="table table-bordered table-striped">
+
+            <thead>
+                <tr>
+                    <td colspan="8">
+                        <form method="get">
+                            <select class="form-select" name="searchType" id="searchType">
+                                <option value="first_name">Tìm theo tên khách hàng</option>
+                                <option value="username">Tìm theo tên tài khoản khách hàng</option>
+                            </select>
+                            <input class="form-control" type="text" placeholder="Tìm kiếm..." id="searchInput"
+                                name="searchInput" value="{{ request.GET.searchInput }}">
+                            <button class="btn btn-light" type="submit">
+                                <i class="fa-thin fa-magnifying-glass" style="color: #3557ff;"></i>
+                                Tìm kiếm</button>
+                        </form>
+                    </td>
+
+                </tr>
+
+            </thead>
+            <thead>
+                <tr>
+                    <th>Tên Tài Khoản</th>
+                    <th>Họ và tên</th>
+                    <th>Mail</th>
+                    <th>Lần cuối đăng nhập</th>
+                    <th>Ngày đăng ký</th>
+                    <th>Trạng thái tài khoản</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody id="product-table-body">
+                {% for kh in customers %}
+                <tr>
+                    <td>{{ kh.username }}</td>
+                    <td> {{ kh.last_name }} {{ kh.first_name }} </td>
+                    <td>{{ kh.email }}</td>
+                    <td>{{ kh.last_login }}</td>
+                    <td>{{ kh.date_joined }}</td>
+                    <td>
+                        {% if kh.is_active %}
+                        <p class="text-success">Tồn tại</p>
+                        {% else %}
+                        <p class="text-danger">Không tồn tại</p>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button class="btn text-success" type="button">
+                            <a href="{% url 'edit_customer' kh.id %}">
+                                <i class="fa-light fa-pen-to-square"></i></a>
+                        </button>
+                        <a href="{% url 'delete_customer' kh.id %}" class="btn text-danger">
+                            <i class="fa-light fa-xmark"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="pagination justify-content-end pe-5">
+        <span class="step-links">
+            {% if customers.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ customers.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ customers.number }} of {{ customers.paginator.num_pages }}.
+            </span>
+
+            {% if customers.has_next %}
+            <a href="?page={{ customers.next_page_number }}">next</a>
+            <a href="?page={{ customers.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+</div>
+{% endblock %}

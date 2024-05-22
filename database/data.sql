@@ -98,3 +98,12 @@ INSERT INTO WebApp_orderdetails (id, Quantity, UnitPrice, AccessoryID_id, OrderI
 VALUES (3,1,462500,3,2);
 INSERT INTO WebApp_orderdetails (id, Quantity, UnitPrice, AccessoryID_id, OrderID_id)
 VALUES (4,2,249000,7,2);
+
+INSERT INTO auth_user (id, password, last_login, is_superuser, username,last_name, email, is_staff, is_active, date_joined,first_name)
+VALUES (3,'pbkdf2_sha256$720000$8wZKZEe31qp8ksJmRbbiK5$DDGXvU84gs27n7L94NdJGjGC+zO/ZKEj3C/yn0FDII8=	','2024-05-21 01:21:35.307383',0,'customer2','Trần','vantaiduongviet@gmail.com',0,1,'2024-05-21 01:11:12.761545','Huyền');
+INSERT INTO auth_user (id, password, last_login, is_superuser, username,last_name, email, is_staff, is_active, date_joined,first_name)
+VALUES (4,'pbkdf2_sha256$720000$8wZKZEe31qp8ksJmRbbiK5$DDGXvU84gs27n7L94NdJGjGC+zO/ZKEj3C/yn0FDII8=	','2024-05-21 01:21:35.307383',0,'customer3','Lê','taynambacsg@gmail.com',0,1,'2024-05-21 01:11:12.761545','Trang');
+INSERT INTO auth_user (id, password, last_login, is_superuser, username,last_name, email, is_staff, is_active, date_joined,first_name)
+VALUES (5,'pbkdf2_sha256$720000$8wZKZEe31qp8ksJmRbbiK5$DDGXvU84gs27n7L94NdJGjGC+zO/ZKEj3C/yn0FDII8=	','2024-05-21 01:21:35.307383',0,'customer4','Nguyễn','vantaivohongphat@gmail.com',0,1,'2024-05-21 01:11:12.761545','Thu');
+INSERT INTO auth_user (id, password, last_login, is_superuser, username,last_name, email, is_staff, is_active, date_joined,first_name)
+VALUES (6,'pbkdf2_sha256$720000$8wZKZEe31qp8ksJmRbbiK5$DDGXvU84gs27n7L94NdJGjGC+zO/ZKEj3C/yn0FDII8=	','2024-05-21 01:21:35.307383',0,'customer5','Lê','thienhuonglogistics@gmail.com',0,1,'2024-05-21 01:11:12.761545','Thuỷ');

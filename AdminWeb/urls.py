@@ -21,4 +21,8 @@ urlpatterns = [
         "delete_parent/<int:id>/", delete_parent_category, name="delete_parent_category"
     ),
     path("delete_category/<int:id>/", delete_category, name="delete_category"),
+    path("customers/", admin_required(customerDashboard), name="admin_customer"),
+    path("customers/add/", add_customer, name="add_customer"),
+    path('customers/edit/<int:user_id>/', edit_customer, name='edit_customer'),
+    path('customers/delete/<int:user_id>/', delete_customer, name='delete_customer'),
 ]

@@ -1,4 +1,4 @@
-from .forms import AccessoriesForm, ParentCategoryForm, CategoryForm
+from .forms import AccessoriesForm, ParentCategoryForm, CategoryForm, CustomerForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
@@ -278,3 +278,65 @@ def delete_category(request, id):
     category = get_object_or_404(Categories, id=id)
     category.delete()
     return redirect("manage_categories")
+
+
+def customerDashboard(request):
+    search_type = request.GET.get("searchType")
+    search_input = request.GET.get("searchInput")
+    customers_list = User.objects.filter(is_superuser=False).order_by("id")
+
+    if search_type == "first_name":
+        try:
+            if search_input:
+                customers_list = User.objects.filter(
+                    first_name__icontains=search_input, is_superuser=False
+                )
+        except ValueError:
+            pass
+    elif search_type == "username":
+        if search_input:
+            customers_list = User.objects.filter(
+                username__icontains=search_input, is_superuser=False
+            )
+
+    paginator = Paginator(customers_list, 3)  # Số lượng khách hàng mỗi trang
+    page_number = request.GET.get("page")
+
+    try:
+        customers = paginator.page(page_number)
+    except PageNotAnInteger:
+        customers = paginator.page(1)
+    except EmptyPage:
+        customers = paginator.page(paginator.num_pages)
+
+    return render(request, "pages/customer.html", {"customers": customers})
+
+
+def add_customer(request):
+    if request.method == "POST":
+        form = CustomerForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("admin_customer")
+    else:
+        form = CustomerForm()
+    return render(request, "pages/add_customer.html", {"form": form})
+
+
+def delete_customer(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    user.delete()
+    messages.success(request, "Khách hàng đã được xóa thành công.")
+    return redirect("admin_customer")
+
+
+def edit_customer(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    if request.method == "POST":
+        form = CustomerForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect("admin_customer")
+    else:
+        form = CustomerForm(instance=user)
+    return render(request, "pages/edit_customer.html", {"form": form})
