@@ -39,9 +39,13 @@
             <div id="user-btn" class="fas fa-user">
             </div>
             <div id="search-btn" class="fas fa-search"></div>
-            <div id="shopping-cart-btn" class="fas fa-shopping-cart">
-                <span id="num-of-product-cart">0</span>
-            </div>
+            <a href="{% url 'view_cart' %}" id="shopping-cart-btn" class="fas fa-shopping-cart text-decoration-none">
+                <span id="num-of-product-cart">
+                    <span id="num-of-product-cart"> {% if not has_items %} 0 {% endif %}
+                        {% if has_items %} {{total_num}} {% endif %}
+                    </span>
+                </span>
+            </a>
             <div id="heart-btn" class="fas fa-heart">
                 <span id="num-of-product-heart">0</span>
             </div>

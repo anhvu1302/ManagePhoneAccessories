@@ -31,3 +31,21 @@ def obfuscate_email(email):
         return email 
 
     return f'{local_part[0]}********{local_part[-1]}@{domain}'
+
+@register.filter
+def format_calculate_price(price, quantity):
+    try:
+        calculate_price = price * quantity
+        return f"{calculate_price:,.0f}đ".replace(",", ".")
+    except (ValueError, TypeError):
+        return price
+    
+
+@register.filter
+def format_calculate_discounted_price(price, cartItem):
+    try:
+        discounted_price = price * (cartItem.AccessoryID.Discount / 100) * cartItem.Quantity
+        calculated_discounted_price = (price * cartItem.Quantity) - discounted_price
+        return f"{calculated_discounted_price:,.0f}đ".replace(",", ".")
+    except (ValueError, TypeError):
+        return price

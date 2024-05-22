@@ -195,3 +195,74 @@ class IdentifyForm(forms.Form):
             server.starttls()
             server.login(sender_email, password)
             server.sendmail(sender_email, receiver_email, message.as_string())
+
+class OrderForm(forms.Form):
+    user_id = forms.IntegerField(
+        label="User ID" ,
+        widget=forms.HiddenInput(),
+        error_messages= {
+            "required": "Vui lòng đăng nhập để đặt hàng",
+
+        }
+    )  # Assuming you have the user ID as an integer
+    total_amount = forms.IntegerField(
+        required=True,
+        label="Total Amount", 
+        error_messages= {
+            "required": "CÓ VẤN ĐỀ @@",
+
+        },
+        widget=forms.HiddenInput(attrs = {}), #Được lấy từ cart đưa vào
+    )
+    phone_number = forms.CharField(
+        required=True,
+        max_length=12, 
+        min_length=12 ,
+        error_messages= {
+            "required": "Vui lòng nhập số điện thoại",
+            "max_length": "Số điện thoại không hợp lệ",
+            "min_length": "Số điện thoại không hợp lệ"
+
+        },
+        label="Phone Number",
+        widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    
+    address = forms.CharField(
+        required=True,
+        min_length=20,
+        error_messages= {
+            "required":"Địa chỉ không được trống!"
+        },
+        label="Address", 
+        widget=forms.TextInput(attrs={'class': 'form-control'}))
+    
+
+    def save(self):
+        user_id = self.cleaned_data["user_id"]
+        total_amount = self.cleaned_data["total_amount"]
+        phone_number = self.cleaned_dataT["phone_number"]
+        address = self.cleaned_data["address"]
+
+        print(user_id, total_amount, phone_number, address )
+        #Save to Orders
+        user = User.objects.get(id = user_id)
+        newOrder = Orders(
+            UserID = user, 
+            TotalAmount = int(total_amount),
+            PhoneNumber = phone_number,
+            Address = address
+        )
+        newOrder.save()
+
+        #Get items in Cart and add each them to OrderDetails
+        cart_items = Cart.objects.filter(UserID=user)
+        for item in cart_items:
+            newOrderDetails = OrderDetails(
+                OrderID = newOrder,
+                AccessoryID = item.AccessoryID,
+                Quantity = item.Quantity,
+                UnitPrice = item.AccessoryID.Price
+            )
+            newOrderDetails.save()
+        #After payment, delete item in cart of user
+        Cart.objects.filter(UserID=user).delete()            

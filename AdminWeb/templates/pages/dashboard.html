@@ -1,7 +1,128 @@
 {% extends "layouts/adminLayout.html" %}
-{% block title %}
-Chào mừng bạn đến với trang Admin
-{% endblock %}
 {% block content %}
-<h1>Chào mừng bạn đến với Trang Thống Kê </h1>
+<h1>Thống kê doanh thu</h1>
+<div>
+    <div class="row">
+        <div class="col-4"></div>
+        <div class="col-4">
+            <div class="mb-3 row justify-content-center align-items-center">
+                <label for="period" class="form-label col-4">Giai đoạn:</label>
+                <div class="col-8">
+                    <select id="period" name="period" class="form-select w-100">
+                        <option value="day">Ngày</option>
+                        <option value="week">Tuần</option>
+                        <option value="month">Tháng</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-4"></div>
+    </div>
+
+</div>
+<!-- Add a container for the chart -->
+<div>
+    <canvas id="myChart" width="300" height="150"></canvas>
+</div>
+<script>
+    $(document).ready(function () {
+        $("#period").on("change", function () {
+            var selectedValue = $(this).val();
+            fetchDataAndRenderChart(selectedValue);
+        });
+
+        // Initial rendering with 'day' selected
+        fetchDataAndRenderChart('day');
+    });
+
+    function fetchDataAndRenderChart(selectedValue) {
+        var csrftoken = $('input[name="csrfmiddlewaretoken"]').val();
+
+        fetch(`/admin/statistical/${selectedValue}/`, {
+            method: "GET",
+            headers: {
+                "X-CSRFToken": csrftoken,
+                "Content-Type": "application/json",
+                "X-Requested-With": "XMLHttpRequest",
+            },
+        })
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error("Network response was not ok.");
+                }
+            })
+            .then((data) => {
+                renderChart(data);
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+            });
+    }
+    function renderChart(data) {
+        var labels = data.statistics_list.map((item) => item.date);
+        var totalOrders = data.statistics_list.map((item) => item.total_orders);
+        var totalRevenue = data.statistics_list.map((item) => item.total_revenue);
+
+        // Check if there's an existing chart instance and destroy it
+        if (window.myChart instanceof Chart) {
+            window.myChart.destroy();
+        }
+
+        var ctx = document.getElementById("myChart").getContext("2d");
+        window.myChart = new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: "Tổng đơn hàng",
+                        data: totalOrders,
+                        backgroundColor: "rgba(75, 192, 192, 0.5)",
+                        yAxisID: "orders",
+                    },
+                    {
+                        label: "Tổng doanh thu",
+                        data: totalRevenue,
+                        type: "line",
+                        borderColor: "rgba(255, 99, 132, 1)",
+                        fill: false,
+                        yAxisID: "revenue",
+                    },
+                ],
+            },
+            options: {
+                scales: {
+                    orders: {
+                        type: "linear",
+                        display: true,
+                        position: "left",
+                        grid: {
+                            drawOnChartArea: false,
+                        },
+                        ticks: {
+                            stepSize: 1,
+                            precision: 0,
+                        },
+                    },
+                    revenue: {
+                        type: "linear",
+                        display: true,
+                        position: "right",
+                        grid: {
+                            drawOnChartArea: true,
+                        },
+                        ticks: {
+                            callback: function (value, index, values) {
+                                return value.toLocaleString() + "đ";
+                            },
+                        },
+                    },
+                },
+            },
+        });
+    }
+
+</script>
 {% endblock %}

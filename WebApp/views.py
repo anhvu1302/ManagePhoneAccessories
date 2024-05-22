@@ -9,28 +9,40 @@ from .forms import (
     RecoveryForm,
     RegistrationForm,
     PaymentForm,
+    OrderForm,
 )
-from .models import Accessories, Categories, ParentCategories
+from .models import (
+    Accessories,
+    Categories,
+    ParentCategories,
+    Orders,
+    OrderDetails,
+    Cart,
+)
+
 from datetime import datetime
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.db.models import Q
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
-from WebApp.models import Accessories
 from WebApp.vnpay import vnpay
 from WebApp.settings import *
 
+
 # Create your views here.
 def index(request):
+    total_num, has_item = get_data_from_cart(request)
+
     data = {
         "accessories": Accessories.objects.all()[:12],
         "parent_categories": ParentCategories.objects.prefetch_related(
             "categories"
         ).all(),
+        "total_num": total_num,
+        "has_items": has_item,
         "user": request.user,
     }
     return render(request, "pages/index.html", data)
@@ -219,7 +231,6 @@ def payment(request):
             else:
                 vnp.requestData["vnp_Locale"] = "vn"
 
-
             vnp.requestData["vnp_CreateDate"] = datetime.now().strftime(
                 "%Y%m%d%H%M%S"
             )  # 20150410063022
@@ -234,6 +245,7 @@ def payment(request):
             print("Form input not validate")
     else:
         return render(request, "pages/payment.html", {"title": "Thanh toán"})
+
 
 def payment_return(request):
     inputData = request.GET
@@ -314,3 +326,208 @@ n = random.randint(10**11, 10**12 - 1)
 n_str = str(n)
 while len(n_str) < 12:
     n_str = "0" + n_str
+
+
+def get_data_from_cart(request):
+    if request.user.is_authenticated:
+        cart_items = Cart.objects.filter(UserID=request.user)
+    else:
+        session_cart = request.session.get("cart_items", {})
+        cart_items = []
+        for accessory_id, quantity_dict in session_cart.items():
+            # Extract accessory ID and quantity
+            accessory = Accessories.objects.get(id=accessory_id)
+            quantity = quantity_dict["quantity"]
+            cart_item = Cart(UserID=None, AccessoryID=accessory, Quantity=quantity)
+            cart_items.append(cart_item)
+    total_num = sum(item.Quantity for item in cart_items)
+    if total_num == 0:
+        has_item = False
+    else:
+        has_item = True
+
+    return total_num, has_item
+
+
+def view_cart(request):
+    if request.user.is_authenticated:
+        cart_items = Cart.objects.filter(UserID=request.user)
+        user = request.user
+        user_id = user.id
+
+    else:
+        user = None
+        user_id = 2
+        session_cart = request.session.get("cart_items", {})
+        cart_items = []
+        for accessory_id, quantity_dict in session_cart.items():
+            # Extract accessory ID and quantity
+            accessory = Accessories.objects.get(id=accessory_id)
+            quantity = quantity_dict["quantity"]
+            cart_item = Cart(UserID=None, AccessoryID=accessory, Quantity=quantity)
+            cart_items.append(cart_item)
+
+    if cart_items is None or len(cart_items) == 0:
+        items_recommend = {
+            "accessories": Accessories.objects.all()[:12],
+            "parent_categories": ParentCategories.objects.prefetch_related(
+                "categories"
+            ).all(),
+            "has_items": False,
+        }
+        print("Has no items in cart!")
+        return render(request, "pages/cart.html", items_recommend)
+
+    total_num = sum(item.Quantity for item in cart_items)
+    TotalAmount = sum(item.AccessoryID.Price * item.Quantity for item in cart_items)
+    total_discount_price = sum(
+        item.Quantity * item.AccessoryID.Price * (item.AccessoryID.Discount / 100)
+        for item in cart_items
+    )
+    have_to_pay = TotalAmount - total_discount_price
+
+    context = {
+        "user": user,
+        "has_items": True,
+        "cart_items": cart_items,
+        "TotalAmount": TotalAmount,
+        "total_discount_price": total_discount_price,
+        "total_num": total_num,
+        "have_to_pay": int(have_to_pay),
+        "form": OrderForm(
+            initial={
+                "user_id": user_id,
+                "total_amount": int(have_to_pay),
+            }
+        ),
+        # Data send to view
+    }
+    return render(request, "pages/cart.html", context)
+
+
+def add_to_cart(request, product_id):
+    if not request.user.is_authenticated:
+        session_cart = request.session.get("cart_items", {})
+        if product_id in session_cart:
+            quantity_dict = session_cart[product_id]
+            current_quantity = quantity_dict["quantity"]
+            current_quantity += 1
+            session_cart[product_id] = {"quantity": current_quantity}
+        else:
+            session_cart[product_id] = {"quantity": 1}
+
+        request.session["cart_items"] = session_cart
+    else:
+        product = Accessories.objects.get(id=product_id)
+        cart_item, created = Cart.objects.get_or_create(
+            AccessoryID=product, UserID=request.user, defaults={"Quantity": 1}
+        )
+        if not created:
+            cart_item.Quantity += 1
+        cart_item.save()
+
+    return redirect("/cart/")
+
+
+def increase_cartItem(request, product_id):
+    if not request.user.is_authenticated:
+        session_cart = request.session.get("cart_items", {})
+        if product_id not in session_cart:
+            session_cart[product_id] = {"quantity": 1}
+        else:
+            quantity_dict = session_cart[product_id]
+            current_quantity = quantity_dict["quantity"]
+            current_quantity += 1
+            session_cart[product_id] = quantity_dict
+            request.session["cart_items"] = session_cart
+    else:
+        product = Accessories.objects.get(id=product_id)
+        cart_item = Cart.objects.get(AccessoryID=product, UserID=request.user)
+        cart_item.Quantity += 1
+        cart_item.save()
+
+    return HttpResponseRedirect("/cart/")
+
+
+def decrease_cartItem(request, product_id):
+    if not request.user.is_authenticated:
+        session_cart = request.session.get("cart_items", {})
+        if product_id not in session_cart:
+            session_cart[product_id] = {"quantity": 1}
+        else:
+            quantity_dict = session_cart[product_id]
+            current_quantity = quantity_dict["quantity"]
+            current_quantity -= 1
+            session_cart[product_id] = quantity_dict
+            request.session["cart_items"] = session_cart
+    else:
+        product = Accessories.objects.get(id=product_id)
+        cart_item = Cart.objects.get(AccessoryID=product, UserID=request.user)
+        cart_item.Quantity -= 1
+        cart_item.save()
+        if cart_item.Quantity == 0:
+            cart_item.delete()
+    return HttpResponseRedirect("/cart/")
+
+
+def remove_from_cart(request, product_id):
+    if request.user.is_authenticated:
+        product = Accessories.objects.get(id=product_id)
+        cart_item = Cart.objects.get(AccessoryID=product, UserID=request.user)
+        cart_item.delete()
+
+    return HttpResponseRedirect("/cart/")
+
+
+def view_orders_list(request):
+    pass
+
+
+def view_order_detail(request):
+    pass
+
+
+def add_order(request):
+    if request.method == "POST":
+        if request.user.is_authenticated:
+            # form = OrderForm(request.POST)
+            # if form.is_valid():
+            #     form.save()
+            #     return HttpResponse("Thanh toán thành công!")
+            user_id = request.POST["user_id"]
+            total_amount = request.POST["total_amount"]
+            phone_number = request.POST["phone_number"]
+            address = request.POST["address"]
+
+            print(user_id, total_amount, phone_number, address)
+            # Save to Orders
+            user = User.objects.get(id=user_id)
+            newOrder = Orders(
+                UserID=user,
+                TotalAmount=int(total_amount),
+                PhoneNumber=phone_number,
+                Address=address,
+            )
+            newOrder.save()
+
+            # Get items in Cart and add each them to OrderDetails
+            cart_items = Cart.objects.filter(UserID=user)
+            for item in cart_items:
+                newOrderDetails = OrderDetails(
+                    OrderID=newOrder,
+                    AccessoryID=item.AccessoryID,
+                    Quantity=item.Quantity,
+                    UnitPrice=item.AccessoryID.Price,
+                )
+                newOrderDetails.save()
+
+                # After payment, delete item in cart of user
+            Cart.objects.filter(UserID=user).delete()
+            return HttpResponse("Thanh toán thành công!")
+
+        else:
+            return HttpResponse(
+                "Thanh toán thất bại! Vui lòng đăng nhập để sử dụng chức năng!"
+            )
+    else:
+        return HttpResponseRedirect("/cart")

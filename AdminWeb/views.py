@@ -10,6 +10,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from WebApp.models import Accessories, Categories, ParentCategories
 from WebApp.models import Orders, OrderDetails
 import json
+from django.utils import timezone
+from datetime import timedelta
+from django.db.models.functions import TruncDay, TruncWeek
+from django.db.models import Sum, Count, F, Q
 
 
 def admin_required(view_func):
@@ -115,6 +119,8 @@ def orderDetails(request, order_id):
                 "TotalAmount": order.TotalAmount,
                 "IsCancelled": order.IsCancelled,
                 "IsPaid": order.IsPaid,
+                "Address": order.Address,
+                "PhoneNumber": order.PhoneNumber,
                 "OrderDate": order.OrderDate.strftime("%Y-%m-%d %H:%M:%S"),
                 "order_details": [],
             }
@@ -148,10 +154,14 @@ def updateOrder(request, order_id):
             data = json.loads(request.body)
             is_paid = data.get("isPaid")
             is_cancelled = data.get("isCancelled")
+            phoneNumber = data.get("phoneNumber")
+            address = data.get("address")
 
             order = Orders.objects.get(pk=order_id)
             order.IsPaid = 1 if is_paid == "true" else 0
             order.IsCancelled = 1 if is_cancelled == "true" else 0
+            order.PhoneNumber = phoneNumber
+            order.Address = address
             order.save()
 
             return JsonResponse(
@@ -340,3 +350,63 @@ def edit_customer(request, user_id):
     else:
         form = CustomerForm(instance=user)
     return render(request, "pages/edit_customer.html", {"form": form})
+
+
+def generate_statistics(period="day"):
+    if period == "day":
+        start_date = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    elif period == "week":
+        start_date = timezone.now() - timedelta(days=6)
+    elif period == "month":
+        start_date = timezone.now() - timedelta(days=29)
+    else:
+        raise ValueError("Period must be 'day', 'week', or 'month'.")
+
+    orders_query = Orders.objects.filter(OrderDate__gte=start_date)
+
+    total_orders = orders_query.count()
+
+    total_revenue = orders_query.aggregate(total_revenue=Sum("TotalAmount"))[
+        "total_revenue"
+    ]
+
+    grouped_statistics = {}
+    if period in ["day", "week", "month"]:
+        for i in range(30 if period == "month" else 7):
+            current_date = start_date + timedelta(days=i)
+            orders_of_day = orders_query.filter(OrderDate__date=current_date.date())
+            total_orders_of_day = orders_of_day.count()
+            total_revenue_of_day = orders_of_day.aggregate(
+                total_revenue=Sum("TotalAmount")
+            )["total_revenue"]
+            grouped_statistics[current_date.date()] = {
+                "total_orders": total_orders_of_day,
+                "total_revenue": total_revenue_of_day,
+            }
+
+    return {
+        "total_orders": total_orders,
+        "total_revenue": total_revenue,
+        "grouped_statistics": grouped_statistics,
+    }
+
+
+def statistical(request, period):
+    stats = generate_statistics(period)
+    json_array = []
+
+    for date, statistics in stats["grouped_statistics"].items():
+        formatted_date = date.strftime("%d/%m/%Y")
+
+        total_orders = statistics["total_orders"]
+        total_revenue = statistics["total_revenue"]
+
+        json_array.append(
+            {
+                "date": formatted_date,
+                "total_orders": total_orders,
+                "total_revenue": total_revenue,
+            }
+        )
+
+    return JsonResponse({"statistics_list": json_array})

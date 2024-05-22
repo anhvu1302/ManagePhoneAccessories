@@ -87,6 +87,26 @@ Trang quản lý đơn hàng
                             </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="mb-3 row justify-content-center align-items-center">
+                                <label for="phoneNum" class="form-label col-4">Số điện thoại:</label>
+                                <div class="col-8">
+                                    <input type="text" id="phoneNum" name="phoneNum" class="form-control w-100">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mb-3 row justify-content-center align-items-center">
+                                <label for="address" class="form-label col-4">Địa chỉ:</label>
+                                <div class="col-8">
+                                    <textarea id="address" name="address" class="form-control w-100">
+                                        </textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
                 </form>
                 <h3>Danh sách sản phẩm</h3>
                 <div id="order-details">
@@ -129,7 +149,8 @@ Trang quản lý đơn hàng
                                 <option value="id">Tìm theo mã</option>
                                 <option value="customerName">Tìm theo tên khách hàng</option>
                             </select>
-                            <input class="form-control" type="text" placeholder="Tìm kiếm..." id="searchInput" name="searchInput" value="{{ request.GET.searchInput }}">
+                            <input class="form-control" type="text" placeholder="Tìm kiếm..." id="searchInput"
+                                name="searchInput" value="{{ request.GET.searchInput }}">
                             <button class="btn btn-light" type="submit">
                                 <i class="fa-thin fa-magnifying-glass" style="color: #3557ff;"></i>
                                 Tìm kiếm

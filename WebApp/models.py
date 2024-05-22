@@ -14,16 +14,16 @@ class Categories(models.Model):
     )
 
 
-
 class Accessories(models.Model):
     Name = models.CharField(max_length=100)
     Price = models.BigIntegerField()
     Discount = models.IntegerField()
-    Image = models.ImageField(upload_to='static/images/product/')
+    Image = models.ImageField(upload_to="static/images/product/")
     Description = models.CharField(max_length=255)
     CategoryID = models.ForeignKey(
         Categories, on_delete=models.CASCADE, related_name="accessories"
     )
+
 
 class Cart(models.Model):
     UserID = models.ForeignKey(User, on_delete=models.CASCADE, related_name="carts")
@@ -36,6 +36,8 @@ class Cart(models.Model):
 class Orders(models.Model):
     UserID = models.ForeignKey(User, on_delete=models.CASCADE, related_name="orders")
     TotalAmount = models.BigIntegerField()
+    PhoneNumber = models.CharField(max_length=10, default="")
+    Address = models.CharField(max_length=255, default="")
     IsCancelled = models.BooleanField(default=False)
     IsPaid = models.BooleanField(default=False)
     OrderDate = models.DateTimeField(auto_now_add=True)

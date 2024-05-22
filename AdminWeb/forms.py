@@ -2,10 +2,16 @@
 from WebApp.models import Accessories, Categories, ParentCategories
 from django.contrib.auth.models import User
 
+
 class ParentCategoryForm(forms.ModelForm):
     class Meta:
         model = ParentCategories
         fields = ["ParentCategoryName"]
+
+    def __init__(self, *args, **kwargs):
+        super(ParentCategoryForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs.update({"class": "form-control"})
 
 
 class CategoryForm(forms.ModelForm):
@@ -26,9 +32,8 @@ class CategoryForm(forms.ModelForm):
         self.fields["ParentCategoryID"].label_from_instance = (
             lambda obj: obj.ParentCategoryName
         )
-        self.fields["ParentCategoryID"].widget.attrs.update(
-            {"class": "formbold-form-input formbold-form-textarea"}
-        )
+        for field_name, field in self.fields.items():
+            field.widget.attrs.update({"class": "form-control"})
 
 
 class AccessoriesForm(forms.ModelForm):
@@ -48,6 +53,8 @@ class AccessoriesForm(forms.ModelForm):
         self.fields["CategoryID"].widget.attrs.update(
             {"class": "formbold-form-input formbold-form-textarea"}
         )
+
+
 class CustomerForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput, required=False)
 
