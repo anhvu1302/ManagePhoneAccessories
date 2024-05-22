@@ -19,7 +19,7 @@ class Accessories(models.Model):
     Name = models.CharField(max_length=100)
     Price = models.BigIntegerField()
     Discount = models.IntegerField()
-    Image = models.ImageField(upload_to='accessories/')
+    Image = models.ImageField(upload_to='static/images/product/')
     Description = models.CharField(max_length=255)
     CategoryID = models.ForeignKey(
         Categories, on_delete=models.CASCADE, related_name="accessories"

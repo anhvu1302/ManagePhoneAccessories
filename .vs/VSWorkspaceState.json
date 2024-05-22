@@ -3,11 +3,14 @@
     "",
     "\\AdminWeb",
     "\\AdminWeb\\templates",
-    "\\AdminWeb\\templates\\pages",
-    "\\ManagePhoneAccessories",
-    "\\static",
-    "\\WebApp"
+    "\\AdminWeb\\templates\\layouts",
+    "\\WebApp",
+    "\\WebApp\\templates",
+    "\\WebApp\\templates\\includes",
+    "\\WebApp\\templates\\layouts",
+    "\\WebApp\\templates\\pages",
+    "\\WebApp\\templatetags"
   ],
-  "SelectedNode": "\\AdminWeb\\templates\\pages\\adminLogin.html",
+  "SelectedNode": "\\WebApp\\templates\\pages\\search_results.html",
   "PreviewInSolutionExplorer": false
 }
