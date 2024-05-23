@@ -76,17 +76,7 @@ class CustomerForm(forms.ModelForm):
 
     def clean_username(self):
         username = self.cleaned_data.get("username")
-        if self.instance.pk:  # Nếu đang chỉnh sửa
-            if (
-                User.objects.filter(username=username)
-                .exclude(pk=self.instance.pk)
-                .exists()
-            ):
-                raise forms.ValidationError(
-                    "Tên tài khoản này đã tồn tại. Vui lòng chọn tên khác."
-                )
-        else:  # Nếu đang thêm mới
-            if User.objects.filter(username=username).exists():
+        if User.objects.filter(username=username).exists():
                 raise forms.ValidationError(
                     "Tên tài khoản này đã tồn tại. Vui lòng chọn tên khác."
                 )
@@ -94,17 +84,12 @@ class CustomerForm(forms.ModelForm):
 
     def clean_email(self):
         email = self.cleaned_data.get("email")
-        if self.instance.pk:  # Nếu đang chỉnh sửa
-            if User.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
-                raise forms.ValidationError(
-                    "Email này đã được sử dụng. Vui lòng chọn email khác."
-                )
-        else:  # Nếu đang thêm mới
-            if User.objects.filter(email=email).exists():
+        if User.objects.filter(email=email).exists():
                 raise forms.ValidationError(
                     "Email này đã được sử dụng. Vui lòng chọn email khác."
                 )
         return email
+
 
     def clean_password(self):
         password = self.cleaned_data.get("password")
@@ -114,6 +99,51 @@ class CustomerForm(forms.ModelForm):
 
     def save(self, commit=True):
         user = super(CustomerForm, self).save(commit=False)
+        password = self.cleaned_data.get("password")
+        if password:
+            user.set_password(password)
+        if commit:
+            user.save()
+        return user
+
+class CustomerUpdateForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = [
+            "username",
+            "first_name",
+            "last_name",
+            "email",
+            "is_active",
+        ]
+
+    def __init__(self, *args, **kwargs):
+        super(CustomerUpdateForm, self).__init__(*args, **kwargs)
+        self.fields["username"].required = True
+        self.fields["email"].required = True
+
+    def clean_username(self):
+        username = self.cleaned_data.get("username")
+        if self.instance.pk:  
+            if User.objects.filter(username=username).exclude(pk=self.instance.pk).exists():
+                raise forms.ValidationError(
+                    "Tên tài khoản này đã tồn tại. Vui lòng chọn tên khác."
+                )
+        
+        return username
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        if self.instance.pk:  
+            if User.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
+                raise forms.ValidationError(
+                    "Email này đã được sử dụng. Vui lòng chọn email khác."
+                )
+        
+        return email
+
+    def save(self, commit=True):
+        user = super(CustomerUpdateForm, self).save(commit=False)
         password = self.cleaned_data.get("password")
         if password:
             user.set_password(password)

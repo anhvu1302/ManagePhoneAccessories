@@ -66,3 +66,16 @@ def format_calculate_discounted_price(price, cartItem):
         return f"{calculated_discounted_price:,.0f}đ".replace(",", ".")
     except (ValueError, TypeError):
         return price
+
+
+# @register.filter
+# def mul(value, arg):
+#     """Multiplies the value by the argument."""
+#     try:
+#         return int(value) * int(arg)
+#     except (ValueError, TypeError):
+#         return ""
+
+@register.filter(name='add_class')
+def add_class(value, arg):
+    return value.as_widget(attrs={'class': arg})

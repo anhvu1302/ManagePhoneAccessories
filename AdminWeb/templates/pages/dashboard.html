@@ -1,6 +1,16 @@
 {% extends "layouts/adminLayout.html" %}
 {% block content %}
 <h1>Thống kê doanh thu</h1>
+<div class="mb-4">
+    <form method="POST" action="{% url 'custom_sales_report' %}">
+        {% csrf_token %}
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date" required>
+        <label for="end_date">End Date:</label>
+        <input type="date" id="end_date" name="end_date" required>
+        <button type="submit">Export PDF</button>
+    </form>
+</div>
 <div>
     <div class="row">
         <div class="col-4"></div>

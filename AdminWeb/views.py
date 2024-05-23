@@ -1,18 +1,32 @@
-from .forms import AccessoriesForm, ParentCategoryForm, CategoryForm, CustomerForm
+from .forms import (
+    AccessoriesForm,
+    ParentCategoryForm,
+    CategoryForm,
+    CustomerForm,
+    CustomerUpdateForm,
+)
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.http import HttpResponseRedirect,JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect, get_object_or_404
 from WebApp.models import Accessories, Categories, ParentCategories
 from WebApp.models import Orders, OrderDetails
-import json
+import json, csv, codecs,os
+from django.conf import settings
 from django.utils import timezone
-from datetime import timedelta
+from datetime import timedelta, datetime, time
+from django.utils.dateparse import parse_date
 from django.db.models.functions import TruncDay, TruncWeek
 from django.db.models import Sum, Count, F, Q
+from django.http import HttpResponse
+from django.utils.timezone import make_aware
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfbase import pdfmetrics
 
 
 def admin_required(view_func):
@@ -334,20 +348,23 @@ def add_customer(request):
 
 def delete_customer(request, user_id):
     user = get_object_or_404(User, id=user_id)
-    user.delete()
-    messages.success(request, "Khách hàng đã được xóa thành công.")
+    if Orders.objects.filter(UserID=user).exists():
+        messages.error(request, "Không thể xóa khách hàng này vì họ đã có đơn hàng.")
+    else:
+        user.delete()
+        messages.success(request, "Khách hàng đã được xóa thành công.")
     return redirect("admin_customer")
 
 
 def edit_customer(request, user_id):
     user = get_object_or_404(User, id=user_id)
     if request.method == "POST":
-        form = CustomerForm(request.POST, instance=user)
+        form = CustomerUpdateForm(request.POST, instance=user)
         if form.is_valid():
             form.save()
             return redirect("admin_customer")
     else:
-        form = CustomerForm(instance=user)
+        form = CustomerUpdateForm(instance=user)
     return render(request, "pages/edit_customer.html", {"form": form})
 
 
@@ -409,3 +426,81 @@ def statistical(request, period):
         )
 
     return JsonResponse({"statistics_list": json_array})
+
+def custom_sales_report(request):
+    if request.method == "POST":
+        start_date = request.POST.get("start_date")
+        end_date = request.POST.get("end_date")
+
+        if start_date and end_date:
+            start_date = parse_date(start_date)
+            end_date = parse_date(end_date)
+
+            # Convert start_date and end_date to aware datetime objects
+            start_date = make_aware(datetime.combine(start_date, time.min))
+            end_date = make_aware(datetime.combine(end_date, time.max))
+
+            sales = OrderDetails.objects.filter(
+                OrderID__OrderDate__range=(start_date, end_date)
+            )
+
+            response = HttpResponse(content_type="application/pdf")
+            response["Content-Disposition"] = (
+                'attachment; filename="'
+                + str(start_date.strftime("%d%m%Y"))
+                + "-"
+                + str(end_date.strftime("%d%m%Y"))
+                + '.pdf"'
+            )
+
+            # Create PDF canvas
+            p = canvas.Canvas(response, pagesize=letter)
+            width, height = letter
+
+            # Path to custom font
+            font_path = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'OpenSans-Regular.ttf')
+            pdfmetrics.registerFont(TTFont('CustomFont', font_path))
+            # Thiết lập font in đậm
+            p.setFont('Helvetica-Bold', 12)
+
+            # Vẽ tiêu đề của báo cáo với font in đậm
+            p.drawString(175, height - 50, f"Sales Report from {start_date.strftime('%d/%m/%Y')} to {end_date.strftime('%d/%m/%Y')}")
+
+            # Đặt lại font về font mặc định
+
+            # Draw table headers
+            p.drawString(50, height - 100, "Product ID")
+            p.drawString(125, height - 100, "Product Name")
+            p.drawString(270, height - 100, "Quantity")
+            p.drawString(325, height - 100, "Unit Price")
+            p.drawString(425, height - 100, "Total Price")
+            p.drawString(500, height - 100, "Order Date")
+
+            y = height - 120  # Initial y position for data rows
+            p.setFont('CustomFont', 12)
+
+            for sale in sales:
+                p.drawString(50, y, str(sale.AccessoryID.id))
+                product_name = sale.AccessoryID.Name
+                if len(product_name) > 20:
+                    product_name = product_name[:20] + "..."
+                p.drawString(125, y, product_name)
+                p.drawString(270, y, str(sale.Quantity))
+                p.drawString(325, y, f"{sale.UnitPrice:}đ")
+                p.drawString(425, y, f"{sale.Quantity * sale.UnitPrice:}đ")
+                p.drawString(500, y, sale.OrderID.OrderDate.strftime("%d/%m/%Y"))
+                y -= 20  # Move to the next row
+
+                # Check for page overflow and create a new page if needed
+                if y < 50:
+                    p.showPage()
+                    p.setFont('CustomFont', 12)
+                    y = height - 50
+
+            p.showPage()
+            p.save()
+
+            return response
+
+    # Handle GET request or invalid POST data here
+    return HttpResponse("Invalid request method or missing start/end date.")
