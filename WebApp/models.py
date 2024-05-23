@@ -23,7 +23,7 @@ class Accessories(models.Model):
     CategoryID = models.ForeignKey(
         Categories, on_delete=models.CASCADE, related_name="accessories"
     )
-
+    Followes = models.ManyToManyField(User, related_name="accessories")
 
 class Cart(models.Model):
     UserID = models.ForeignKey(User, on_delete=models.CASCADE, related_name="carts")

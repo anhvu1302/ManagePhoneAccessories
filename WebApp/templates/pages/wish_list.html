@@ -1,0 +1,153 @@
+{% extends "layouts/userLayout.html" %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %} Shop - Các sản phẩm bạn yêu thích {% endblock %}
+
+
+
+
+{% block content %}
+
+{% if not has_item_wish %}
+<div class="container cart-empty" style="margin-top: 20rem;">
+    <h1 class="text-center" style="font-size: 6rem;">Quý khách chưa có gì trong wish list </h1>
+
+    <section class="products" id="products">
+        <h1 class="heading"> Các <span>Sản phẩm </span>bán chạy</h1>
+        <div class="container" id="product-list" style="display: flex;">
+            {% for acc in recommend_items %}
+            <div class="col-md-auto box">
+                <div class="icons">
+                    <a href="/cart/add/{{acc.id}}/" class="fas fa-shopping-cart "></a>
+
+                    <a href="#" class="fas fa-heart"></a>
+                    <a href="product_detail/{{acc.id}}" class="fas fa-eye"></a>
+                </div>
+                <div class="image">
+                    <img src="/{{acc.Image}}">
+                </div>
+                <div class="content">
+                    <h3 class="title-name text-truncate">
+                        <a href="product_detail/{{ acc.id }}" data-bs-toggle="tooltip"
+                            title="{{ acc.Name }}">{{acc.Name}}
+                        </a>
+                    </h3>
+                    <div class="box-price">
+                        <div class="price">{{ acc.Price|format_discounted_price:acc.Discount }}</div>
+                        <div class="cut">{{ acc.Price|format_currency }}</div>
+                        <div class="offer">{{ acc.Discount }}% off</div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+    </section>
+
+</div>
+{% endif %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% if has_item_wish %}
+
+<section class=" p-5 gradient-custom  mb-5 "
+    style="border-radius: .5rem .5rem 0 0; width: 80%; margin: 0 auto; margin-top: 15rem;">
+    <style>
+        .gradient-custom {
+            /* fallback for old browsers */
+            background: #ff007b;
+
+            /* Chrome 10-25, Safari 5.1-6 */
+            background: -webkit-linear-gradient(to right, rgb(212, 41, 81), rgb(186, 12, 12));
+
+            /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+            background: linear-gradient(to right, rgb(212, 41, 81), rgb(186, 12, 12))
+        }
+    </style>
+    <div class="row">
+        <div class="">
+            <div class="card mb-4">
+                <div class="card-header py-3">
+                    <h5 class="mb-0">Wish list của bạng có <span>({{total_num}})</span> sản phẩm</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Single item -->
+                    {% for item in wish_items%}
+                    <div class="row" onclick="window.location.href='/product_detail/{{item.id}}'">
+                        <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
+                            <!-- Image -->
+                            <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
+                                <img src="/{{item.Image}}" class="w-100">
+                                <a href="#!">
+                                    <div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
+                                </a>
+                            </div>
+                            <!-- Image -->
+                        </div>
+
+                        <div class="col-lg-5 col-md-6 mb-4 mb-lg-0" onclick="window.location.href='/product_detail/{{item.id}}'">
+                            <!-- Data -->
+                            <p>Tên sản phẩm: <strong>{{item.Name}}</strong></p>
+                            <p>Loại sản phẩm:
+                                <strong>{{item.CategoryID.ParentCategoryID.ParentCategoryName}}</strong></p>
+                            <p>Dòng sản phẩm: <strong>{{item.CategoryID.CategoryName}}</strong></p>
+                            <p>Đơn giá: <strong style="text-decoration: line-through;">{{item.Price |format_currency }}
+                                </strong></p>
+                            <p>Discount: <strong class="text-danger">{{item.Discount}} % off</strong></p>
+                            <p>Giá sau giảm:
+                                <strong> {{ item.Price|format_discounted_price:item.Discount }}</strong>
+                            </p>
+
+                            <!-- Button them vao gio hang -->
+                            <a href="" data-mdb-button-init="" data-mdb-ripple-init=""
+                                class="btn btn-danger btn-sm me-1 mb-2" data-mdb-tooltip-init=""
+                                data-mdb-button-initialized="true" aria-label="Add to Cart"
+                                data-mdb-original-title="Remove item" data-mdb-tooltip-initialized="true">
+                                <i class="fas fa-shopping-cart "></i>
+                            </a>
+
+                            <!-- Button lay ra wishlist -->
+                            <a href="{% url "remove_wish_list" item.id %}" data-mdb-button-init="" data-mdb-ripple-init=""
+                                class="btn btn-danger btn-sm me-1 mb-2" data-mdb-tooltip-init=""
+                                data-mdb-button-initialized="true" aria-label="Remove item"
+                                data-mdb-original-title="Remove item" data-mdb-tooltip-initialized="true">
+                                <i class="fas fa-trash"></i>
+                            </a>
+
+                        </div>
+                    </div>
+                    <!-- Single item -->
+
+                    <hr class="my-4">
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+{% endif %}
+{% endblock %}

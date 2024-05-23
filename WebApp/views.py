@@ -35,7 +35,7 @@ from WebApp.settings import *
 # Create your views here.
 def index(request):
     total_num, has_item = get_data_from_cart(request)
-
+    total_num_wish, has_item_wish = get_data_wish_list(request)
     data = {
         "accessories": Accessories.objects.all()[:12],
         "parent_categories": ParentCategories.objects.prefetch_related(
@@ -44,6 +44,8 @@ def index(request):
         "total_num": total_num,
         "has_items": has_item,
         "user": request.user,
+        'has_item_wish': has_item_wish,
+        'quantity_wish': total_num_wish,
     }
     return render(request, "pages/index.html", data)
 
@@ -529,3 +531,69 @@ def add_order(request):
 
     else:
         return HttpResponseRedirect("/cart")
+
+
+#Pham Dinh Thien Vu - Wishlist
+def get_data_wish_list(request):
+    user = User.objects.get(id = request.user.id)
+    wish_items = user.accessories.all();
+    quantity = wish_items.count();
+    is_has_item = False;
+
+    if(quantity > 0):
+        is_has_item = True
+
+    return quantity, is_has_item;
+
+def view_wish_list(request):
+    num_carts, has_item_cart = get_data_from_cart(request)
+
+    user = User.objects.get(id = request.user.id)
+    wish_items = user.accessories.all();
+    quantity = wish_items.count();
+    is_has_item = False;
+    
+    recommend_items = Accessories.objects.all().order_by("Followes")[:12]
+
+    if not request.user.is_authenticated:
+        return HttpResponse(f"Đăng nhập để sử dụng chức năng!")
+
+    if(quantity > 0):
+        is_has_item = True
+
+    context = {
+        'has_item_wish': is_has_item,
+        'quantity_wish': quantity,
+        'recommend_items': recommend_items,
+        'wish_items': wish_items,
+        'user': user,
+        'user_id': user.id,
+        "total_num": num_carts,
+        "has_items": has_item_cart,
+    }
+    print("Data view_wish_list: ", context);
+    return render(request, "pages/wish_list.html", context)
+
+def add_wish_list(request, product_id):
+    if not request.user.is_authenticated:
+        return HttpResponse(f"Đăng nhập để sử dụng chức năng!")
+    
+    accessory = Accessories.objects.get(id = product_id)
+    user = User.objects.get(id = request.user.id)
+
+    accessory.Followes.add(user)
+    accessory.save()
+    return redirect("/")
+
+def remove_wish_list(request, product_id):
+    accessory = Accessories.objects.get(id = product_id)
+    user = User.objects.get(id = request.user.id)
+
+    accessory.Followes.remove(user)
+    accessory.save()
+    print("remove success")
+    return redirect("/")
+
+
+
+

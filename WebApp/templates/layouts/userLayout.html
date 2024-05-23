@@ -48,9 +48,15 @@
                     </span>
                 </span>
             </a>
-            <div id="heart-btn" class="fas fa-heart">
-                <span id="num-of-product-heart">0</span>
-            </div>
+            
+            <a href="{% url 'wish_list' %}" id="heart-btn" class="fas fa-heart">
+                <span id="num-of-product-heart">
+                    <span id="num-of-product-cart"> {% if not has_item_wish %} 0 {% endif %}
+                        {% if has_item_wish %} {{quantity_wish}} {% endif %}
+                    </span>
+                </span>
+            </a>    
+
         </div>
 
         <form action="{% url 'search_accessories' %}" class="search-form" method="get">
