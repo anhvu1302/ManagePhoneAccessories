@@ -31,6 +31,9 @@ urlpatterns = [
     path("payment", views.payment, name="payment"),
     path("payment_return", views.payment_return, name="payment_return"),
 
+    #user order
+    path("user/order", views.viewOrder, name="view_user_order"),
+
     # cart
     path("cart/", views.view_cart, name="view_cart"),
     path("cart/add/<int:product_id>/", views.add_to_cart, name="add_to_cart"),

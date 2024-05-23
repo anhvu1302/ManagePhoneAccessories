@@ -19,7 +19,7 @@ from .models import (
     OrderDetails,
     Cart,
 )
-
+from django.db import transaction
 from datetime import datetime
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -202,49 +202,25 @@ def hmacsha512(key, data):
     return hmac.new(byteKey, byteData, hashlib.sha512).hexdigest()
 
 
-def payment(request):
+def payment(orderId, amount, ipaddr):
+    vnp = vnpay()
+    vnp.requestData["vnp_Version"] = "2.1.0"
+    vnp.requestData["vnp_Command"] = "pay"
+    vnp.requestData["vnp_TmnCode"] = VNPAY_TMN_CODE
+    vnp.requestData["vnp_Amount"] = amount * 100
+    vnp.requestData["vnp_CurrCode"] = "VND"
+    vnp.requestData["vnp_TxnRef"] = datetime.now().strftime("%Y%m%d%H%M%S")
+    vnp.requestData["vnp_OrderInfo"] = "VNPAY " + str(orderId)
+    vnp.requestData["vnp_OrderType"] = "billpayment"
+    vnp.requestData["vnp_Locale"] = "vn"
 
-    if request.method == "POST":
-        # Process input data and build url payment
-        form = PaymentForm(request.POST)
-        if form.is_valid():
-            order_type = form.cleaned_data["order_type"]
-            order_id = form.cleaned_data["order_id"]
-            amount = form.cleaned_data["amount"]
-            order_desc = form.cleaned_data["order_desc"]
-            # bank_code = form.cleaned_data['bank_code']
-            language = form.cleaned_data["language"]
-            ipaddr = get_client_ip(request)
-            # Build URL Payment
-            vnp = vnpay()
-            vnp.requestData["vnp_Version"] = "2.1.0"
-            vnp.requestData["vnp_Command"] = "pay"
-            vnp.requestData["vnp_TmnCode"] = VNPAY_TMN_CODE
-            vnp.requestData["vnp_Amount"] = amount * 100
-            vnp.requestData["vnp_CurrCode"] = "VND"
-            vnp.requestData["vnp_TxnRef"] = order_id
-            vnp.requestData["vnp_OrderInfo"] = order_desc
-            vnp.requestData["vnp_OrderType"] = order_type
-            # Check language, default: vn
-            if language and language != "":
-                vnp.requestData["vnp_Locale"] = language
-            else:
-                vnp.requestData["vnp_Locale"] = "vn"
-
-            vnp.requestData["vnp_CreateDate"] = datetime.now().strftime(
-                "%Y%m%d%H%M%S"
-            )  # 20150410063022
-            vnp.requestData["vnp_IpAddr"] = ipaddr
-            vnp.requestData["vnp_ReturnUrl"] = VNPAY_RETURN_URL
-            vnpay_payment_url = vnp.get_payment_url(
-                VNPAY_PAYMENT_URL, VNPAY_HASH_SECRET_KEY
-            )
-            print(vnpay_payment_url)
-            return redirect(vnpay_payment_url)
-        else:
-            print("Form input not validate")
-    else:
-        return render(request, "pages/payment.html", {"title": "Thanh toán"})
+    vnp.requestData["vnp_CreateDate"] = datetime.now().strftime(
+        "%Y%m%d%H%M%S"
+    )  # 20150410063022
+    vnp.requestData["vnp_IpAddr"] = ipaddr
+    vnp.requestData["vnp_ReturnUrl"] = VNPAY_RETURN_URL
+    vnpay_payment_url = vnp.get_payment_url(VNPAY_PAYMENT_URL, VNPAY_HASH_SECRET_KEY)
+    return vnpay_payment_url
 
 
 def payment_return(request):
@@ -261,8 +237,12 @@ def payment_return(request):
         vnp_PayDate = inputData["vnp_PayDate"]
         vnp_BankCode = inputData["vnp_BankCode"]
         vnp_CardType = inputData["vnp_CardType"]
+        print(order_desc.split()[1])
         if vnp.validate_response(VNPAY_HASH_SECRET_KEY):
             if vnp_ResponseCode == "00":
+                order = Orders.objects.get(pk=int(order_desc.split()[1]))
+                order.IsPaid = 1
+                order.save()
                 return render(
                     request,
                     "pages/payment_return.html",
@@ -349,6 +329,23 @@ def get_data_from_cart(request):
     return total_num, has_item
 
 
+def viewOrder(request):
+    all_orders = Orders.objects.all()
+
+    for order in all_orders:
+        order_details = OrderDetails.objects.filter(OrderID=order)
+        order.order_details.set(order_details)
+
+    paginator = Paginator(all_orders, 10) 
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    data = {
+        "orders": page_obj,
+    }
+    return render(request, "pages/user_order.html", data)
+
+
 def view_cart(request):
     if request.user.is_authenticated:
         cart_items = Cart.objects.filter(UserID=request.user)
@@ -375,7 +372,6 @@ def view_cart(request):
             ).all(),
             "has_items": False,
         }
-        print("Has no items in cart!")
         return render(request, "pages/cart.html", items_recommend)
 
     total_num = sum(item.Quantity for item in cart_items)
@@ -489,45 +485,47 @@ def view_order_detail(request):
 
 def add_order(request):
     if request.method == "POST":
-        if request.user.is_authenticated:
-            # form = OrderForm(request.POST)
-            # if form.is_valid():
-            #     form.save()
-            #     return HttpResponse("Thanh toán thành công!")
-            user_id = request.POST["user_id"]
-            total_amount = request.POST["total_amount"]
-            phone_number = request.POST["phone_number"]
-            address = request.POST["address"]
+        user_id = request.POST["user_id"]
+        total_amount = request.POST["total_amount"]
+        phone_number = request.POST["phone_number"]
+        address = request.POST["address"]
+        paymentMethod = request.POST["PaymentMethod"]
 
-            print(user_id, total_amount, phone_number, address)
-            # Save to Orders
-            user = User.objects.get(id=user_id)
-            newOrder = Orders(
-                UserID=user,
-                TotalAmount=int(total_amount),
-                PhoneNumber=phone_number,
-                Address=address,
-            )
-            newOrder.save()
-
-            # Get items in Cart and add each them to OrderDetails
-            cart_items = Cart.objects.filter(UserID=user)
-            for item in cart_items:
-                newOrderDetails = OrderDetails(
-                    OrderID=newOrder,
-                    AccessoryID=item.AccessoryID,
-                    Quantity=item.Quantity,
-                    UnitPrice=item.AccessoryID.Price,
+        try:
+            with transaction.atomic():
+                # Save to Orders
+                user = User.objects.get(id=user_id)
+                newOrder = Orders(
+                    UserID=user,
+                    TotalAmount=int(total_amount),
+                    PhoneNumber=phone_number,
+                    Address=address,
                 )
-                newOrderDetails.save()
+                newOrder.save()
 
-                # After payment, delete item in cart of user
-            Cart.objects.filter(UserID=user).delete()
-            return HttpResponse("Thanh toán thành công!")
+                # Get items in Cart and add each of them to OrderDetails
+                cart_items = Cart.objects.filter(UserID=user)
+                for item in cart_items:
+                    newOrderDetails = OrderDetails(
+                        OrderID=newOrder,
+                        AccessoryID=item.AccessoryID,
+                        Quantity=item.Quantity,
+                        UnitPrice=item.AccessoryID.Price,
+                    )
+                    newOrderDetails.save()
 
-        else:
-            return HttpResponse(
-                "Thanh toán thất bại! Vui lòng đăng nhập để sử dụng chức năng!"
-            )
+                # After payment, delete items in cart of user
+                Cart.objects.filter(UserID=user).delete()
+
+                if paymentMethod == "VNPAY":
+                    paymentUrl = payment(
+                        newOrder.id, newOrder.TotalAmount, get_client_ip(request)
+                    )
+                    return redirect(paymentUrl)
+                else:
+                    return HttpResponse("Thanh toán thành công!")
+        except Exception as e:
+            return HttpResponse(f"Thanh toán thất bại! Lỗi: {str(e)}")
+
     else:
         return HttpResponseRedirect("/cart")

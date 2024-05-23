@@ -3,8 +3,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.http import HttpResponseRedirect
-from django.http import JsonResponse
+from django.http import HttpResponseRedirect,JsonResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect, get_object_or_404
 from WebApp.models import Accessories, Categories, ParentCategories

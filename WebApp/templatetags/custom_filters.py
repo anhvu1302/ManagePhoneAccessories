@@ -21,16 +21,31 @@ def format_discounted_price(price, discount):
     except (ValueError, TypeError):
         return price
 
+
+@register.filter
+def format_discounted_price_quantity(orderDetail):
+    try:
+        discounted_price = (
+            orderDetail.AccessoryID.Price
+            * (100 - orderDetail.AccessoryID.Discount)
+            / 100
+        ) * orderDetail.Quantity
+        return f"{discounted_price:,.0f}đ".replace(",", ".")
+    except (ValueError, TypeError):
+        return price
+
+
 @register.filter
 def obfuscate_email(email):
-    if '@' not in email:
-        return email 
+    if "@" not in email:
+        return email
 
-    local_part, domain = email.split('@')
+    local_part, domain = email.split("@")
     if len(local_part) < 2:
-        return email 
+        return email
 
-    return f'{local_part[0]}********{local_part[-1]}@{domain}'
+    return f"{local_part[0]}********{local_part[-1]}@{domain}"
+
 
 @register.filter
 def format_calculate_price(price, quantity):
@@ -39,12 +54,14 @@ def format_calculate_price(price, quantity):
         return f"{calculate_price:,.0f}đ".replace(",", ".")
     except (ValueError, TypeError):
         return price
-    
+
 
 @register.filter
 def format_calculate_discounted_price(price, cartItem):
     try:
-        discounted_price = price * (cartItem.AccessoryID.Discount / 100) * cartItem.Quantity
+        discounted_price = (
+            price * (cartItem.AccessoryID.Discount / 100) * cartItem.Quantity
+        )
         calculated_discounted_price = (price * cartItem.Quantity) - discounted_price
         return f"{calculated_discounted_price:,.0f}đ".replace(",", ".")
     except (ValueError, TypeError):

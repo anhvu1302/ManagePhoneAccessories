@@ -14,6 +14,8 @@
     <link href="{% static 'fontawesome/css/all.css' %}" rel="stylesheet" />
     <link href="{% static 'style.css' %}" rel="stylesheet" />
     <link href="{% static 'product_details.css' %}" rel="stylesheet" />
+    <link href="{% static 'sweetalert2.min.css' %}" rel="stylesheet" >
+
 
     <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
     <script src="{% static 'popper.min.js' %}"></script>
@@ -70,6 +72,21 @@
                     <p class="user-rank">Tham gia:{{ user.date_joined|date:"d/m/Y" }}</p>
                 </div>
             </div>
+            {% if user.is_staff %}
+            <div class="logout-box">
+                <a class="logout-button" href="/admin/">
+                    <i class="fa-thin fa-solar-system"></i>
+                    <span>Trang quản trị</span>
+                </a>
+            </div>
+            {% else %}
+            {% endif %}
+            <div class="logout-box">
+                <a class="logout-button" href="{% url 'view_user_order' %}">
+                    <i class="fa-thin fa-boxes-stacked"></i>
+                    <span>Đơn hàng của tôi</span>
+                </a>
+            </div>
             <div class="logout-box">
                 <a class="logout-button" href="{% url 'logout' %}">
                     <i class="fas fa-sign-out-alt"></i>
@@ -90,7 +107,7 @@
             {% endif %}
         </div>
     </header>
-    <div class="container-fluid home">
+    <div class="container-fluid">
         <div class="row">
             {% block content %}
             {% endblock %}
@@ -149,6 +166,7 @@
         </div>
     </section>
     <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'sweetalert2.all.min.js' %}"></script>
     <script src="{% static 'main.js' %}"></script>
 </body>
 
