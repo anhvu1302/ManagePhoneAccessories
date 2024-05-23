@@ -2,6 +2,16 @@
 {% block content %}
 <h1>Thống kê doanh thu</h1>
 <div>
+    <div class="d-flex justify-content-center mb-5">
+        <form method="POST" action="{% url 'custom_sales_report' %}">
+            {% csrf_token %}
+            <label for="start_date">Start Date:</label>
+            <input type="date" id="start_date" name="start_date" class="form-control" required>
+            <label for="end_date">End Date:</label>
+            <input type="date" id="end_date" name="end_date" class="form-control" required>
+            <button type="submit" class="btn btn-primary">Export PDF</button>
+        </form>
+    </div>
     <div class="row">
         <div class="col-4"></div>
         <div class="col-4">

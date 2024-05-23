@@ -1,4 +1,5 @@
 {% load custom_filters %}
+{% load custom_tags %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -14,7 +15,7 @@
     <link href="{% static 'fontawesome/css/all.css' %}" rel="stylesheet" />
     <link href="{% static 'style.css' %}" rel="stylesheet" />
     <link href="{% static 'product_details.css' %}" rel="stylesheet" />
-    <link href="{% static 'sweetalert2.min.css' %}" rel="stylesheet" >
+    <link href="{% static 'sweetalert2.min.css' %}" rel="stylesheet">
 
 
     <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
@@ -30,7 +31,7 @@
                 <li><a href="{% url 'index' %}">home</a></li>
                 <li>
                     <a href="javascript:void(0)">sản phẩm</a>
-                    {% include 'includes/_navbar.html' %}
+                    {% load_navbar %}
                 </li>
                 <li><a href="{% url 'contact' %}">liên hệ</a></li>
                 <li><a href="{% url 'policy' %}">Chính sách</a></li>
@@ -42,14 +43,10 @@
             </div>
             <div id="search-btn" class="fas fa-search"></div>
             <a href="{% url 'view_cart' %}" id="shopping-cart-btn" class="fas fa-shopping-cart text-decoration-none">
-                <span id="num-of-product-cart">
-                    <span id="num-of-product-cart"> {% if not has_items %} 0 {% endif %}
-                        {% if has_items %} {{total_num}} {% endif %}
-                    </span>
-                </span>
+                {% loadCartQuantity %}
             </a>
             <div id="heart-btn" class="fas fa-heart">
-                <span id="num-of-product-heart">0</span>
+                {% loadHeartQuantity %}
             </div>
         </div>
 
@@ -61,50 +58,7 @@
         </form>
 
         <div class="user-box" id="user-box" style="display: none;">
-            {% if user.is_authenticated %}
-            <div class="user-details">
-                <div class="image-user">
-                    <img src="{% static 'images/app/avatarUser.jpg' %}" alt="Avatar" class="avatar">
-                </div>
-                <div class="user-infor">
-                    <h2 class="user-name text-danger">{{ user.username }}</h2>
-                    <p class="user-email">{{ user.email|obfuscate_email }}</p>
-                    <p class="user-rank">Tham gia:{{ user.date_joined|date:"d/m/Y" }}</p>
-                </div>
-            </div>
-            {% if user.is_staff %}
-            <div class="logout-box">
-                <a class="logout-button" href="/admin/">
-                    <i class="fa-thin fa-solar-system"></i>
-                    <span>Trang quản trị</span>
-                </a>
-            </div>
-            {% else %}
-            {% endif %}
-            <div class="logout-box">
-                <a class="logout-button" href="{% url 'view_user_order' %}">
-                    <i class="fa-thin fa-boxes-stacked"></i>
-                    <span>Đơn hàng của tôi</span>
-                </a>
-            </div>
-            <div class="logout-box">
-                <a class="logout-button" href="{% url 'logout' %}">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Đăng xuất</span>
-                </a>
-            </div>
-            {% else %}
-            <div class="logout-box">
-                <a class="logout-button" href="{% url 'login' %}">
-                    <i class="fas fa-sign-in-alt"></i>
-                    <span>Đăng Nhập</span>
-                </a>
-                <a class="logout-button" href="{% url 'register' %}">
-                    <i class="fa-sharp fa-thin fa-address-card"></i>
-                    <span>Đăng ký</span>
-                </a>
-            </div>
-            {% endif %}
+            {% loadUserBox %}
         </div>
     </header>
     <div class="container-fluid">

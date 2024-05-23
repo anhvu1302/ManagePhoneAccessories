@@ -1,0 +1,46 @@
+{% if user.is_authenticated %}
+{% load custom_filters %}
+{% load static %}
+<div class="user-details">
+    <div class="image-user">
+        <img src="{% static 'images/app/avatarUser.jpg' %}" alt="Avatar" class="avatar">
+    </div>
+    <div class="user-infor">
+        <h2 class="user-name text-danger">{{ user.username }}</h2>
+        <p class="user-email">{{ user.email|obfuscate_email }}</p>
+        <p class="user-rank">Tham gia:{{ user.date_joined|date:"d/m/Y" }}</p>
+    </div>
+</div>
+{% if user.is_staff %}
+<div class="logout-box">
+    <a class="logout-button" href="/admin/">
+        <i class="fa-thin fa-solar-system"></i>
+        <span>Trang quản trị</span>
+    </a>
+</div>
+{% else %}
+{% endif %}
+<div class="logout-box">
+    <a class="logout-button" href="{% url 'view_user_order' %}">
+        <i class="fa-thin fa-boxes-stacked"></i>
+        <span>Đơn hàng của tôi</span>
+    </a>
+</div>
+<div class="logout-box">
+    <a class="logout-button" href="{% url 'logout' %}">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Đăng xuất</span>
+    </a>
+</div>
+{% else %}
+<div class="logout-box">
+    <a class="logout-button" href="{% url 'login' %}">
+        <i class="fas fa-sign-in-alt"></i>
+        <span>Đăng Nhập</span>
+    </a>
+    <a class="logout-button" href="{% url 'register' %}">
+        <i class="fa-sharp fa-thin fa-address-card"></i>
+        <span>Đăng ký</span>
+    </a>
+</div>
+{% endif %}

@@ -19,31 +19,27 @@ from .models import (
     OrderDetails,
     Cart,
 )
-from django.db import transaction
 from datetime import datetime
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.core.mail import send_mail
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db import transaction
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
-from WebApp.vnpay import vnpay
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 from WebApp.settings import *
+from WebApp.vnpay import vnpay
 
 
 # Create your views here.
 def index(request):
-    total_num, has_item = get_data_from_cart(request)
 
     data = {
         "accessories": Accessories.objects.all()[:12],
-        "parent_categories": ParentCategories.objects.prefetch_related(
-            "categories"
-        ).all(),
-        "total_num": total_num,
-        "has_items": has_item,
-        "user": request.user,
     }
     return render(request, "pages/index.html", data)
 
@@ -60,9 +56,6 @@ def productDetail(request, accessory_id):
     accessory = Accessories.objects.filter(id=accessory_id).first()
     data = {
         "accessory": accessory,
-        "parent_categories": ParentCategories.objects.prefetch_related(
-            "categories"
-        ).all(),
     }
     return render(request, "pages/product_detail.html", data)
 
@@ -75,11 +68,8 @@ def productByCategory(request, categories_id=None):
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
-    parent_categories = ParentCategories.objects.prefetch_related("categories").all()
-
     data = {
         "accessories": page_obj,
-        "parent_categories": parent_categories,
         "category": category,
     }
 
@@ -96,11 +86,8 @@ def productByParentCategory(request, parent_categories_id=None):
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
-    parent_categories = ParentCategories.objects.prefetch_related("categories").all()
-
     data = {
         "accessories": page_obj,
-        "parent_categories": parent_categories,
         "parCategory": parCategory,
     }
 
@@ -123,11 +110,8 @@ def search_accessories(request):
     except EmptyPage:
         accessories = paginator.page(paginator.num_pages)
 
-    parent_categories = ParentCategories.objects.prefetch_related("categories").all()
-
     data = {
         "accessories": accessories,
-        "parent_categories": parent_categories,
         "query": query,
     }
 
@@ -192,6 +176,20 @@ def recovery(request, uidb64, token):
     return render(request, "pages/recovery.html", {"form": form})
 
 
+def send_payment_confirmation_email(order, order_details):
+    subject = 'Xác nhận thanh toán thành công'
+    context = {
+        'order': order,
+        'order_details': order_details
+    }
+    html_message = render_to_string('emails/payment_success.html', context)
+    plain_message = strip_tags(html_message)
+    from_email = EMAIL_HOST_USER
+    to = order.UserID.email
+
+    send_mail(subject, plain_message, from_email, [to], html_message=html_message)
+
+
 def create_payment(request):
     return render(request, "pages/create_payment.html", {"title": "Danh sách demo"})
 
@@ -237,12 +235,19 @@ def payment_return(request):
         vnp_PayDate = inputData["vnp_PayDate"]
         vnp_BankCode = inputData["vnp_BankCode"]
         vnp_CardType = inputData["vnp_CardType"]
-        print(order_desc.split()[1])
         if vnp.validate_response(VNPAY_HASH_SECRET_KEY):
             if vnp_ResponseCode == "00":
-                order = Orders.objects.get(pk=int(order_desc.split()[1]))
-                order.IsPaid = 1
-                order.save()
+                orders_list = Orders.objects.filter(id=int(order_desc.split()[1]))
+                order_details = OrderDetails.objects.filter(OrderID=orders_list[0])
+
+                send_payment_confirmation_email(orders_list[0], order_details)
+                # if order.IsPaid:
+                #     print(order)
+                #     print(order_details)
+                # else:
+
+                #     order.IsPaid = 1
+                #     order.save()
                 return render(
                     request,
                     "pages/payment_return.html",
@@ -336,8 +341,8 @@ def viewOrder(request):
         order_details = OrderDetails.objects.filter(OrderID=order)
         order.order_details.set(order_details)
 
-    paginator = Paginator(all_orders, 10) 
-    page_number = request.GET.get('page')
+    paginator = Paginator(all_orders, 10)
+    page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
     data = {

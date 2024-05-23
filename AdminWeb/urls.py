@@ -30,4 +30,5 @@ urlpatterns = [
     path("customers/add/", add_customer, name="add_customer"),
     path("customers/edit/<int:user_id>/", edit_customer, name="edit_customer"),
     path("customers/delete/<int:user_id>/", delete_customer, name="delete_customer"),
+    path('report/custom/', admin_required(custom_sales_report), name='custom_sales_report'),
 ]

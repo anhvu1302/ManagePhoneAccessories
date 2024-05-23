@@ -1,10 +1,30 @@
 {% extends "layouts/adminLayout.html" %}
-
+{% load custom_filters %}
 {% block content %}
-<h2>Chỉnh Sửa Khách Hàng</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Cập Nhật</button>
-</form>
+<div class="container mt-5">
+    <h2>Chỉnh Sửa Khách Hàng</h2>
+    <form method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            {{ form.username|add_class:"form-control" }}
+        </div>
+        <div class="mb-3">
+            <label for="first_name" class="form-label">First Name</label>
+            {{ form.first_name|add_class:"form-control" }}
+        </div>
+        <div class="mb-3">
+            <label for="last_name" class="form-label">Last Name</label>
+            {{ form.last_name|add_class:"form-control" }}
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            {{ form.email|add_class:"form-control" }}
+        </div>
+        <div class="mb-3 form-check">
+            {{ form.is_active|add_class:"form-check-input" }} {{ form.is_active.label_tag }}
+        </div>
+        <button type="submit" class="btn btn-primary">Lưu Thay Đổi</button>
+    </form>
+</div>
 {% endblock %}
