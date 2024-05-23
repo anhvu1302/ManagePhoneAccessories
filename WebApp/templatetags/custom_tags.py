@@ -18,10 +18,13 @@ def loadUserBox(context):
 
 @register.inclusion_tag("partials/cartQuantity.html", takes_context=True)
 def loadCartQuantity(context):
-    request = context["request"]
-    cart_items = Cart.objects.filter(UserID=request.user)
-    total_num = sum(item.Quantity for item in cart_items)
-    return {"total_num": total_num}
+    request = context.get("request")
+    if request and request.user.is_authenticated:
+        cart_items = Cart.objects.filter(UserID=request.user)
+        total_num = sum(item.Quantity for item in cart_items)
+        return {"total_num": total_num}
+    else:
+        return {"total_num": 0}
 
 
 @register.inclusion_tag("partials/heartQuantity.html", takes_context=True)

@@ -77,7 +77,7 @@ def admin_login(request):
 
 def logout_admin(request):
     logout(request)
-    return redirect("/admin")
+    return redirect("/admin/")
 
 
 def dashboard(request):

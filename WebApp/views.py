@@ -177,12 +177,9 @@ def recovery(request, uidb64, token):
 
 
 def send_payment_confirmation_email(order, order_details):
-    subject = 'Xác nhận thanh toán thành công'
-    context = {
-        'order': order,
-        'order_details': order_details
-    }
-    html_message = render_to_string('emails/payment_success.html', context)
+    subject = "Xác nhận thanh toán thành công"
+    context = {"order": order, "order_details": order_details}
+    html_message = render_to_string("emails/payment_success.html", context)
     plain_message = strip_tags(html_message)
     from_email = EMAIL_HOST_USER
     to = order.UserID.email
@@ -235,19 +232,17 @@ def payment_return(request):
         vnp_PayDate = inputData["vnp_PayDate"]
         vnp_BankCode = inputData["vnp_BankCode"]
         vnp_CardType = inputData["vnp_CardType"]
+        order = Orders.objects.get(id=int(order_desc.split()[1]))
+
         if vnp.validate_response(VNPAY_HASH_SECRET_KEY):
             if vnp_ResponseCode == "00":
-                orders_list = Orders.objects.filter(id=int(order_desc.split()[1]))
-                order_details = OrderDetails.objects.filter(OrderID=orders_list[0])
 
-                send_payment_confirmation_email(orders_list[0], order_details)
-                # if order.IsPaid:
-                #     print(order)
-                #     print(order_details)
-                # else:
-
-                #     order.IsPaid = 1
-                #     order.save()
+                if not order.IsPaid:
+                    orders_list = Orders.objects.filter(id=int(order_desc.split()[1]))
+                    order_details = OrderDetails.objects.filter(OrderID=orders_list[0])
+                    send_payment_confirmation_email(orders_list[0], order_details)
+                    order.IsPaid = 1
+                    order.save()
                 return render(
                     request,
                     "pages/payment_return.html",
