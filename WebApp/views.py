@@ -535,6 +535,10 @@ def add_order(request):
 
 #Pham Dinh Thien Vu - Wishlist
 def get_data_wish_list(request):
+    quantity = 0;
+    is_has_item = False;
+    if not request.user.is_authenticated:
+        return quantity, is_has_item;
     user = User.objects.get(id = request.user.id)
     wish_items = user.accessories.all();
     quantity = wish_items.count();
@@ -546,8 +550,11 @@ def get_data_wish_list(request):
     return quantity, is_has_item;
 
 def view_wish_list(request):
-    num_carts, has_item_cart = get_data_from_cart(request)
+    if not request.user.is_authenticated:
+        return HttpResponse(f"Đăng nhập để sử dụng chức năng!")
+    
 
+    num_carts, has_item_cart = get_data_from_cart(request)
     user = User.objects.get(id = request.user.id)
     wish_items = user.accessories.all();
     quantity = wish_items.count();
@@ -555,8 +562,7 @@ def view_wish_list(request):
     
     recommend_items = Accessories.objects.all().order_by("Followes")[:12]
 
-    if not request.user.is_authenticated:
-        return HttpResponse(f"Đăng nhập để sử dụng chức năng!")
+   
 
     if(quantity > 0):
         is_has_item = True
@@ -586,6 +592,9 @@ def add_wish_list(request, product_id):
     return redirect("/")
 
 def remove_wish_list(request, product_id):
+    if not request.user.is_authenticated:
+        return HttpResponse(f"Đăng nhập để sử dụng chức năng!")
+
     accessory = Accessories.objects.get(id = product_id)
     user = User.objects.get(id = request.user.id)
 
