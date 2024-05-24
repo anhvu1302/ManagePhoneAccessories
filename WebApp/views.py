@@ -185,6 +185,7 @@ def send_payment_confirmation_email(order, order_details):
     to = order.UserID.email
 
     send_mail(subject, plain_message, from_email, [to], html_message=html_message)
+    print("gửi mail thành công")
 
 
 def create_payment(request):
@@ -237,12 +238,14 @@ def payment_return(request):
         if vnp.validate_response(VNPAY_HASH_SECRET_KEY):
             if vnp_ResponseCode == "00":
 
-                if not order.IsPaid:
+                if order.IsPaid == 0:
+                    print('gửi mail')
                     orders_list = Orders.objects.filter(id=int(order_desc.split()[1]))
                     order_details = OrderDetails.objects.filter(OrderID=orders_list[0])
                     send_payment_confirmation_email(orders_list[0], order_details)
                     order.IsPaid = 1
                     order.save()
+
                 return render(
                     request,
                     "pages/payment_return.html",
