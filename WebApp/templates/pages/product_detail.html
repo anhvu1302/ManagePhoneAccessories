@@ -35,10 +35,10 @@ Phụ kiện: {{ accessory.Name }}
                         <input class="form-control" type="number" id="quantity" min="1" value="1">
                     </div>
                     <div class="button_actions">
-                        <button type="submit" class="btn btn_base btn_add_cart btn-cart add_to_cart">
+                        <a class="btn btn_base btn_add_cart btn-cart add_to_cart" href="/cart/add/{{ accessory.id }}/">
                             <i class="fas fa-shopping-cart"></i>
                             <span class="text_1">Thêm vào giỏ hàng</span>
-                        </button>
+                        </a>
                     </div>
                     <ul class="tabs-title col-lg-12">
                         <li class="tab-link current" data-tab="tab-1">

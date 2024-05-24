@@ -106,7 +106,7 @@ def orderDashboard(request):
     if not orders_list:
         orders_list = Orders.objects.none()
 
-    paginator = Paginator(orders_list, 1)
+    paginator = Paginator(orders_list, 10)
 
     page = request.GET.get("page")
     try:

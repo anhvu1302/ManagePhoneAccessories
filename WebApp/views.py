@@ -445,7 +445,7 @@ def get_data_from_cart(request):
 
 
 def viewOrder(request):
-    all_orders = Orders.objects.all()
+    all_orders = Orders.objects.filter(UserID=request.user.id)
 
     for order in all_orders:
         order_details = OrderDetails.objects.filter(OrderID=order)
