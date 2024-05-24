@@ -6,12 +6,12 @@ urlpatterns = [
     path("contact", views.contact, name="contact"),
     path("policy", views.policy, name="policy"),
     path(
-        "product/parent-category/<int:parent_categories_id>",
+        "product/parent-category/<int:parent_categories_id>/",
         views.productByParentCategory,
         name="product_by_parent_category",
     ),
     path(
-        "product/category/<int:categories_id>",
+        "product/category/<int:categories_id>/",
         views.productByCategory,
         name="product_by_category",
     ),
@@ -30,10 +30,8 @@ urlpatterns = [
     path("create-payment", views.create_payment, name="create_payment"),
     path("payment", views.payment, name="payment"),
     path("payment_return", views.payment_return, name="payment_return"),
-
-    #user order
+    # user order
     path("user/order", views.viewOrder, name="view_user_order"),
-
     # cart
     path("cart/", views.view_cart, name="view_cart"),
     path("cart/add/<int:product_id>/", views.add_to_cart, name="add_to_cart"),

@@ -8,6 +8,22 @@ Kết quả tìm kiếm cho từ khóa {{ query }}
 {% block content %}
 <section class="products" id="products">
     <h1 class="heading mt-5"><span>Kết quả tìm kiếm cho: </span>{{ query }}</h1>
+    <div class="d-flex justify-content-center">
+        <form method="get" action="{% url 'search_accessories' %}" class="mb-3 row g-3">
+            <input type="hidden" name="name" value="{{ query }}">
+            <div class="col-md-3 fs-4">
+                <label for="start_price" class="form-label">Giá bắt đầu:</label>
+                <input type="number" id="start_price" name="start_price" class="form-control" value="{{ start_price }}">
+            </div>
+            <div class="col-md-3 fs-4">
+                <label for="end_price" class="form-label">Giá kết thúc:</label>
+                <input type="number" id="end_price" name="end_price" class="form-control" value="{{ end_price }}">
+            </div>
+            <div class="col-md-2 align-self-end">
+                <button type="submit" class="btn">Search</button>
+            </div>
+        </form>
+    </div>
     <div class="container" id="product-list" style="display: flex; flex-wrap: wrap;">
         {% for acc in accessories %}
         <div class="col-md-auto box">
@@ -41,8 +57,9 @@ Kết quả tìm kiếm cho từ khóa {{ query }}
     <div class="pagination justify-content-center fs-1">
         <span class="step-links">
             {% if accessories.has_previous %}
-            <a href="?name={{ query }}&page=1">&laquo; first</a>
-            <a href="?name={{ query }}&page={{ accessories.previous_page_number }}">previous</a>
+            <a href="?name={{ query }}&start_price={{ start_price }}&end_price={{ end_price }}&page=1">&laquo; first</a>
+            <a
+                href="?name={{ query }}&start_price={{ start_price }}&end_price={{ end_price }}&page={{ accessories.previous_page_number }}">previous</a>
             {% endif %}
 
             <span class="current">
@@ -50,8 +67,11 @@ Kết quả tìm kiếm cho từ khóa {{ query }}
             </span>
 
             {% if accessories.has_next %}
-            <a href="?name={{ query }}&page={{ accessories.next_page_number }}">next</a>
-            <a href="?name={{ query }}&page={{ accessories.paginator.num_pages }}">last &raquo;</a>
+            <a
+                href="?name={{ query }}&start_price={{ start_price }}&end_price={{ end_price }}&page={{ accessories.next_page_number }}">next</a>
+            <a
+                href="?name={{ query }}&start_price={{ start_price }}&end_price={{ end_price }}&page={{ accessories.paginator.num_pages }}">last
+                &raquo;</a>
             {% endif %}
         </span>
     </div>

@@ -1,10 +1,10 @@
 <ul>
     {% for parent in parent_categories %}
     <li>
-        <a href="/product/parent-category/{{parent.id}}">{{ parent.ParentCategoryName }}</a>
+        <a href="/product/parent-category/{{parent.id}}/">{{ parent.ParentCategoryName }}</a>
         <ul>
             {% for category in parent.categories.all %}
-            <li><a href="/product/category/{{category.id}}">{{ category.CategoryName }}</a></li>
+            <li><a href="/product/category/{{category.id}}/">{{ category.CategoryName }}</a></li>
             {% endfor %}
         </ul>
     </li>

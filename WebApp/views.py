@@ -27,6 +27,7 @@ from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db import transaction
+from django.db.models import F, FloatField, ExpressionWrapper
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
@@ -60,9 +61,53 @@ def productDetail(request, accessory_id):
     return render(request, "pages/product_detail.html", data)
 
 
+def search_accessories_by_price(request):
+    start_price = request.GET.get("start_price")
+    end_price = request.GET.get("end_price")
+
+    if start_price and end_price:
+        accessories = Accessories.objects.filter(
+            Price__gte=start_price, Price__lte=end_price
+        )
+    else:
+        accessories = Accessories.objects.all()
+
+    context = {
+        "accessories": accessories,
+    }
+    return render(request, "accessories/search_results.html", context)
+
+
 def productByCategory(request, categories_id=None):
     category = Categories.objects.filter(id=categories_id).first()
     accessories_list = Accessories.objects.filter(CategoryID__id=categories_id)
+
+    start_price = request.GET.get("start_price")
+    end_price = request.GET.get("end_price")
+
+    try:
+        if start_price:
+            start_price = float(start_price)
+        if end_price:
+            end_price = float(end_price)
+    except ValueError:
+        start_price = None
+        end_price = None
+
+    if start_price is not None or end_price is not None:
+        discounted_price_expression = ExpressionWrapper(
+            F('Price') * (100 - F('Discount')) / 100, output_field=FloatField()
+        )
+        accessories_list = accessories_list.annotate(discounted_price=discounted_price_expression)
+
+        if start_price is not None and end_price is not None:
+            accessories_list = accessories_list.filter(
+                discounted_price__gte=start_price, discounted_price__lte=end_price
+            )
+        elif start_price is not None:
+            accessories_list = accessories_list.filter(discounted_price__gte=start_price)
+        elif end_price is not None:
+            accessories_list = accessories_list.filter(discounted_price__lte=end_price)
 
     paginator = Paginator(accessories_list, 4)
     page_number = request.GET.get("page")
@@ -71,6 +116,8 @@ def productByCategory(request, categories_id=None):
     data = {
         "accessories": page_obj,
         "category": category,
+        "start_price": start_price,
+        "end_price": end_price,
     }
 
     return render(request, "pages/productByCategory.html", data)
@@ -82,6 +129,37 @@ def productByParentCategory(request, parent_categories_id=None):
         CategoryID__ParentCategoryID__id=parent_categories_id
     )
 
+    start_price = request.GET.get("start_price")
+    end_price = request.GET.get("end_price")
+
+    try:
+        if start_price:
+            start_price = float(start_price)
+        if end_price:
+            end_price = float(end_price)
+    except ValueError:
+        start_price = None
+        end_price = None
+
+    if start_price is not None or end_price is not None:
+        discounted_price_expression = ExpressionWrapper(
+            F("Price") * (100 - F("Discount")) / 100, output_field=FloatField()
+        )
+        accessories_list = accessories_list.annotate(
+            discounted_price=discounted_price_expression
+        )
+
+        if start_price is not None and end_price is not None:
+            accessories_list = accessories_list.filter(
+                discounted_price__gte=start_price, discounted_price__lte=end_price
+            )
+        elif start_price is not None:
+            accessories_list = accessories_list.filter(
+                discounted_price__gte=start_price
+            )
+        elif end_price is not None:
+            accessories_list = accessories_list.filter(discounted_price__lte=end_price)
+
     paginator = Paginator(accessories_list, 4)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
@@ -89,6 +167,8 @@ def productByParentCategory(request, parent_categories_id=None):
     data = {
         "accessories": page_obj,
         "parCategory": parCategory,
+        "start_price": start_price,
+        "end_price": end_price,
     }
 
     return render(request, "pages/productByParentCategory.html", data)
@@ -96,10 +176,40 @@ def productByParentCategory(request, parent_categories_id=None):
 
 def search_accessories(request):
     query = request.GET.get("name", "")
-    accessories_list = []
+    start_price = request.GET.get("start_price")
+    end_price = request.GET.get("end_price")
+    accessories_list = Accessories.objects.all()
 
     if query:
-        accessories_list = Accessories.objects.filter(Name__contains=query)
+        accessories_list = accessories_list.filter(Name__icontains=query)
+
+    try:
+        if start_price:
+            start_price = float(start_price)
+        if end_price:
+            end_price = float(end_price)
+    except ValueError:
+        start_price = None
+        end_price = None
+
+    if start_price is not None or end_price is not None:
+        discounted_price_expression = ExpressionWrapper(
+            F("Price") * (100 - F("Discount")) / 100, output_field=FloatField()
+        )
+        accessories_list = accessories_list.annotate(
+            discounted_price=discounted_price_expression
+        )
+
+        if start_price is not None and end_price is not None:
+            accessories_list = accessories_list.filter(
+                discounted_price__gte=start_price, discounted_price__lte=end_price
+            )
+        elif start_price is not None:
+            accessories_list = accessories_list.filter(
+                discounted_price__gte=start_price
+            )
+        elif end_price is not None:
+            accessories_list = accessories_list.filter(discounted_price__lte=end_price)
 
     paginator = Paginator(accessories_list, 4)
     page = request.GET.get("page")
@@ -113,6 +223,8 @@ def search_accessories(request):
     data = {
         "accessories": accessories,
         "query": query,
+        "start_price": start_price,
+        "end_price": end_price,
     }
 
     return render(request, "pages/search_results.html", data)
@@ -239,7 +351,7 @@ def payment_return(request):
             if vnp_ResponseCode == "00":
 
                 if order.IsPaid == 0:
-                    print('gửi mail')
+                    print("gửi mail")
                     orders_list = Orders.objects.filter(id=int(order_desc.split()[1]))
                     order_details = OrderDetails.objects.filter(OrderID=orders_list[0])
                     send_payment_confirmation_email(orders_list[0], order_details)
